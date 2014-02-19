@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script type="text/javascript"> 
+			var Settings = 
+				{
+				  name: "index",
+				  classes: [],
+				  page: {
+				    viewProps: {
+				      className: "Page"
+				    },
+				    subcollection: [
+				      {
+				        modelProps: {
+				          settings: {},
+				          options: {}
+				        },
+				        viewProps: {
+				          css: {
+				            width: "100px",
+				            height: "100px",
+				            background: "green"
+				          }
+				        }
+				      },
+				      {
+				        modelProps: {
+				          settings: {},
+				          options: {}
+				        },
+				        viewProps: {
+				          className: "Panel",
+				          css: {
+				            width: "200px",
+				            height: "100px",
+				            background: "blue"
+				          }
+				        },
+				        subcollection: [
+				          {
+				            modelProps: {
+				              settings: {},
+				              options: {}
+				            },
+				            viewProps: {
+				              css: {
+				                width: "70px",
+				                height: "100px",
+				                background: "rgba(100,0,200, .7)",
+				                "border-radius": "100%"
+				              }
+				            }
+				          }
+				        ]
+				      }
+				    ]
+				  }
+				}
+		</script>
+		<script type="text/javascript" src="src/libs/require.js" data-main = "src/main.js"></script>
+	</head>
+	<body>
+	</body>
+</html>
