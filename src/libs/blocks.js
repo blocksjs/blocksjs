@@ -4,18 +4,20 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block"], function(
         //it would be cool to have this as a singleton object like jquery 
         //that way you can do blocks('.Panel') and 
         //get an array of the panel objects. 
-        //I vote for that!!!!
+        //I vote for that!!!! 
     }; 
     blocks.prototype = {
         modules: [], 
         postal: postal, 
-        blocks: {}, 
+        blockList: {}, //a hash of all blocks by id and the object associated with that id 
+        userBlockList: {}, //a hash of special Ids users provide for blocks with the value being the _blockId of the object 
+        classList: {}, //list of classes and an array of blockIds for each of those classes 
 
         //Create functions
         createBlock: function( json, callback ){}, 
         createModel: function( settings, options ){}, //create object and set settings/options  
         createView: function(model, prototype, props){}, 
-        toJSON: function( page, name, location, callback ){}, //savestate in old library 
+        saveState: function( page, name, location, callback ){}, //savestate in old library 
 
         //IO functions
         getClass: function(name, callback, ctx){}, 
@@ -24,10 +26,11 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block"], function(
         loadPageSync: function(json){}, 
 
         //Utils
-        getNumChildren: function(collection){}, //find number of objects to be rendered from the collection 
+        getNumBlocks: function(collection){}, //find number of objects to be rendered from the collection 
         getBlockById: function(){}, 
         getBlocksByClassName: function(){}, //get array of .Panel blocks
         getBlocksByType: function(){} //get all processing objects, Threejs objects, canvas objects etc...
+
 
     };  
     return new blocks; 
