@@ -1,0 +1,9 @@
+{
+  "name": "blocks-test",
+  "version": "0.0.1",
+  "dependencies": {
+    "mocha": "",
+    "chai": "",
+    "requirejs": "~2.1.11"
+  }
+}

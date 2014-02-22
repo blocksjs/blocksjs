@@ -1,4 +1,4 @@
-define([], function(){
+define(['backbone'], function(Backbone){
 	var Block = Backbone.View.extend({
 		blockType: 'Block', 
 		superClass: 'Backbone.View', 

@@ -3,9 +3,9 @@ require.config({
 	waitSeconds: 10, 
 	packages: [
 		{
-			name: 'blocks', 
-			location: '../libs', 
-			main:"blocks"
+			name: 'core', 
+			location: '../', 
+			main:"core"
 		}, 
 		{
 			name: 'jquery', 
@@ -39,7 +39,7 @@ require.config({
 		},
 	]
 }); 
-require(['blocks'], function(blocks){
+require(['core'], function(core){
 	//start module 
-	window.blocks = blocks; 
+	var blocks = window.blocks = new core; 
 }); 

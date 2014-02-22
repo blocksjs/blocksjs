@@ -33,5 +33,5 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block"], function(
 
 
     };  
-    return new blocks; 
+    return blocks; 
 })
