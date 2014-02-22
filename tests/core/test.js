@@ -61,14 +61,7 @@ require(['core', 'chai', 'mocha'], function(core, chai){
 
   //Blocks Core API 
   describe('core', function(){ 
-    var blocks = new core; 
-
-    //modules array 
-    describe('#modules', function(){ 
-      it("should exist", function(){ 
-          expect(blocks).to.have.a.property("modules"); 
-      });
-    });     
+    var blocks = new core;      
 
     //postal 
     describe('#postal', function(){ 
@@ -78,60 +71,94 @@ require(['core', 'chai', 'mocha'], function(core, chai){
     }); 
 
     //block list 
-    describe('#blockList', function(){
-      it('should exist', function(){
-        expect(blocks).to.have.a.property('blockList'); 
+    describe('#_blockIds', function(){ 
+      it('should exist', function(){ 
+        expect(blocks).to.have.a.property('blockList');  
       }); 
+
+      it('should have update the hash every time a block is created'); 
+
+      it('should update every time a block is deleted'); 
+
+      it('should not contain special ids that users set'); 
+
+      it('should have a direct reference to each object in the hash'); 
     });     
 
     //userBlockList 
-    describe('#userBlockList', function(){
-      it('should have a user block list', function(){
+    describe('#_userBlockIds', function(){ 
+      it('should exist', function(){ 
         expect(blocks).to.have.a.property('userBlockList'); 
       }); 
-    });     
 
-    //classList 
-    describe('#classList', function(){
-      it('should have a class list', function(){
-        expect(blocks).to.have.a.property('classList'); 
-      }); 
+      it('should update only if a created block has a blockId'); 
+
+      it('should have a reference to any _blockId put in the hash');
+
+      it('should get rid of the objects in the hash when the block is removed');  
     }); 
 
-    //createBlock
-    describe('#createBlock()', function(){
-      it('should return an object', function(done){
-        var state = blocks.createBlock({}, function(page){
+    //classList 
+    describe('#classList', function(){ 
+      it('should have a class list', function(){ 
+        expect(blocks).to.have.a.property('classList'); 
+      });  
+
+      it('should have an array for each class loaded in memory');
+
+      it('should add the _blockId to the hash when a block is created')
+
+      it('should get rid of the id in the hash when the block is removed');
+
+    }); 
+
+    //createBlock 
+    describe('#createBlock()', function(){ 
+
+      describe('#(name, json, callback)', function(){ 
+        it('should provide a block state object into the callback based on the settings'); 
+      }); 
+      describe('#(name, callback)', function(){ 
+        it('should provide a default version of the block state object if no settings are give'); 
+      }); 
+      describe('#(settings, callback)', function(){ 
+        it('should provide a default version of the [className] state object if settings.view.className is given'); 
+        it('should provide a default version of the block state object if no className is given');
+      }); 
+      describe('#(option)', function(){ 
+        it('should create a block state object if name and settings are provided'); 
+      }); 
+      it('should return an object', function(done){ 
+        var state = blocks.createBlock({}, function(page){ 
           expect(page).to.exist; 
           done(); 
         }); 
       }); 
-    });     
+      it('should otherwise return null'); 
+    }); 
 
-    //createModel
-    describe('#createModel()', function(){
+    //_createModel
+    describe('#_createModel()', function(){
       it('should return a Backbone.Model if nothing is provided',function(){
         var model = blocks.createModel(); 
         expect(model).to.be.an.instanceof(Backbone.Model); 
       }); 
       it('should return a model with the properties of the json sent into it'); 
-      it('should set subcollection if that is an option property'); 
     });   
 
-    //createView
-    describe('#createView()', function(){
+    //_createView
+    describe('#_createView()', function(){
       it('should create the view with the class prototype'); 
-      it('should create a blockCollection if that is an option'); 
     });   
 
-    //saveState
-    describe('#saveState()', function(){
+    //saveState 
+    describe('#saveState()', function(){ 
       it('should make an ajax request somewhere'); 
-    });   
+    });    
 
     //getClass
     describe('#getClass()', function(done){ 
-      it('should require the class that is requested', function(){ 
+      it('should put the requested prototype into the callback', function(){ 
         blocks.getClass('Page', function(klass){ 
           var blockProto = require('Page'); 
           console.log(blockProto, klass);  
@@ -151,12 +178,13 @@ require(['core', 'chai', 'mocha'], function(core, chai){
     describe('#loadPage()', function(){ 
       var json = {}; 
       var json2 = {sync: true}; 
-      it('should load the json if a string or just parse it if the json is already on the page'); 
+      it('should be able to load a string reference and load it'); 
+      it('should parse the json if it is already on the page as a Settings variable'); 
       it('should be able to load synchronously'); 
       describe('#callback', function(){ 
         it('should have an object with a page property'); 
-        it('should have backbone view/model as a part of the page'); 
-        it('should also have the same metadata as the original json'); 
+        it('should have backbone view/model as a part of the conent property'); 
+        it('should also have the same metadata as the original json as settings'); 
         it('should render the page'); 
       }); 
     }); 
@@ -187,8 +215,6 @@ require(['core', 'chai', 'mocha'], function(core, chai){
       it('should return all blocks of the given type (threejs, processing etc)'); 
     });   
   }); 
-
-
 
   mocha.run(); 
 });

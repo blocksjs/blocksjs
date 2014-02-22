@@ -7,11 +7,10 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
         //I vote for that!!!! 
     }; 
     blocks.prototype = {
-        modules: {}, 
         postal: postal, 
-        blockList: {}, //a hash of all blocks by id and the object associated with that id 
-        userBlockList: {}, //a hash of special Ids users provide for blocks with the value being the _blockId of the object 
-        classList: {}, //list of classes and an array of blockIds for each of those classes 
+        _blockIds: {}, //a hash of all blocks by id and the object associated with that id 
+        _userBlockIds: {}, //a hash of special Ids users provide for blocks with the value being the _blockId of the object 
+        _classList: {}, //list of classes and an array of blockIds for each of those classes 
         //Create functions 
 
         //create a block from the options. If no class is specific then Block will be created 
