@@ -1,0 +1,17 @@
+{
+  name: "Testing Page",
+  classes: [
+    "TextBlock"
+  ],
+  page: {
+    viewProps: {
+      className: "Page"
+    },
+    subcollection: [
+    {
+      viewProps: {
+        className: "TextBlock"
+      }
+    }]
+  }
+}
