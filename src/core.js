@@ -1,12 +1,12 @@
 define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container", "Page"], function($, _, Backbone, less, postal, Block){
     'use strict;'
-    var blocks = function(name){
+    var blocks /*= function(name){
         //it would be cool to have this as a singleton object like jquery 
         //that way you can do blocks('.Panel') and 
         //get an array of the panel objects. 
         //I vote for that!!!! 
     }; 
-    blocks.prototype = {
+    blocks.prototype */= {
         modules: {}, 
         postal: postal, 
         blockList: {}, //a hash of all blocks by id and the object associated with that id 
@@ -16,7 +16,8 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
 
         //create a block from the options. If no class is specific then Block will be created 
         createBlock: function(){
-            if(arguments.length === 0) return; 
+            console.log('hello');
+            //if(arguments.length === 0) return; 
             var parent = this, 
                 blocks = window.blocks, 
                 args = Array.prototype.slice(arguments), 
