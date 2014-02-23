@@ -1,15 +1,16 @@
 define(["Block"], function(Block){
-	var Panel = Block.extend({
-		blockType: 'Panel', 
+	var Container = Block.extend({
+		blockClass: 'Container', 
 		super: Block.prototype, 
-		initialize: function(options){
+		superClass: 'Block',
+/*		initialize: function(options){
 			this.super.initialize.call(this, options); 
 			this.subcollection = new Backbone.Collection(options.subcollection || []); 
 		},
-		create: function(json){}, 
+*/		create: function(json){}, 
 		render: function(){}, 
 		renderBlock: function(){},  //has to do this for each block in collection 
-		toJSON: function(){} //would be different because has to go through collection
+		toJSON: function(){}, //would be different because has to go through collection
 		getClassList: function(){}, //get classes array from our collectin object 
 		//These functions would be used in the Collection
 		//This should be separated as a separate object 
@@ -19,5 +20,5 @@ define(["Block"], function(Block){
 		blockType: 'defaultBlockType'
 		*/
 	}); 
-	return Block; 
+	return Container; 
 }); 

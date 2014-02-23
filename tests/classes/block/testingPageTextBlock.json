@@ -1,16 +1,16 @@
 {
-  name: "Testing Page",
-  classes: [
+  "name": "Testing Page",
+  "classes": [
     "TextBlock"
   ],
-  page: {
-    viewProps: {
-      className: "Page"
+  "page": {
+    "viewProps": {
+      "className": "Page"
     },
-    subcollection: [
+    "subcollection": [
     {
-      viewProps: {
-        className: "TextBlock"
+      "viewProps": {
+        "className": "TextBlock"
       }
     }]
   }
