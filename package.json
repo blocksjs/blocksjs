@@ -4,6 +4,7 @@
   "dependencies": {
     "mocha": "",
     "chai": "",
-    "requirejs": "~2.1.11"
+    "requirejs": "~2.1.11", 
+    "express":""
   }
 }

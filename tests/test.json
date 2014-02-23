@@ -1,18 +1,18 @@
 {
   "name": "test",
   "classes": [],
-  "page": {
-    "viewProps": {
+  "content": {
+    "view": {
       "x": "0",
       "y": "0",
       "z": "0",
       "autohide": "false",
       "immutableCSS": "false",
-      "className": "Page"
+      "blockClass": "Page"
     },
     "subcollection": [
       {
-        "viewProps": {
+        "view": {
           "x": "635",
           "y": "231",
           "z": "0",
@@ -33,11 +33,11 @@
               "color": "white"
             }
           },
-          "className": "Block"
+          "blockClass": "Block"
         }
       },
       {
-        "viewProps": {
+        "view": {
           "x": "489",
           "y": "324",
           "z": "0",
@@ -58,11 +58,11 @@
               "color": "white"
             }
           },
-          "className": "Block"
+          "blockClass": "Block"
         }
       },
       {
-        "viewProps": {
+        "view": {
           "x": "389",
           "y": "195",
           "z": "0",
@@ -83,11 +83,11 @@
               "color": "white"
             }
           },
-          "className": "Block"
+          "blockClass": "Block"
         }
       },
       {
-        "viewProps": {
+        "view": {
           "x": "461",
           "y": "39",
           "z": "0",
@@ -108,11 +108,11 @@
               "color": "white"
             }
           },
-          "className": "Block"
+          "blockClass": "Block"
         }
       },
       {
-        "viewProps": {
+        "view": {
           "x": "239",
           "y": "305",
           "z": "0",
@@ -133,11 +133,11 @@
               "color": "white"
             }
           },
-          "className": "Block"
+          "blockClass": "Block"
         }
       },
       {
-        "viewProps": {
+        "view": {
           "x": "366",
           "y": "425",
           "z": "0",
@@ -158,7 +158,7 @@
               "color": "white"
             }
           },
-          "className": "Block"
+          "blockClass": "Block"
         }
       }
     ]

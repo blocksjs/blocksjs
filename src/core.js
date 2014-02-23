@@ -1,12 +1,14 @@
 define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container", "Page"], function($, _, Backbone, less, postal, Block){
     'use strict;'
-    var blocks = function(name){
+    var core = function(settings, callback){
         //it would be cool to have this as a singleton object like jquery 
         //that way you can do blocks('.Panel') and 
         //get an array of the panel objects. 
         //I vote for that!!!! 
+        var controller = this; 
+        if(settings) this.loadPage(settings, callback); 
     }; 
-    blocks.prototype = {
+    core.prototype = { 
         postal: postal, 
         _blockIds: {}, //a hash of all blocks by id and the object associated with that id 
         _userBlockIds: {}, //a hash of special Ids users provide for blocks with the value being the _blockId of the object 
@@ -18,8 +20,8 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
             if(arguments.length === 0) return; 
             var parent = this, 
                 blocks = window.blocks, 
-                args = Array.prototype.slice(arguments), 
-                name, json, callback; 
+                args = Array.prototype.slice.call(arguments), 
+                name = '', json = {}, callback; 
 
             //check that the first arg is a name, if not then it should just be the settings json
             if(typeof args[0] === 'string'){
@@ -45,20 +47,17 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
                 }
                 //(options object)
                 else{ 
-                    name = args[0].name || 'Block'; 
-                    json = args[0].settings || {}; 
-                    callback = args[0].callback || function(){}; 
+                    name = args[0].name || args[0].view.blockClass || 'Block'; 
+                    json = args[0].settings || args[0]; 
+                    callback = args[0].callback || null; 
                 }
-                //or (options object with all three)
-                name = name.view.blockClass;
             }
-
             //get that specific class and use it 
             blocks.getClass(name, function(klass){ 
                 //add model and view 
-                var ret = {}; 
-                ret.model = blocks.createModel(json.modelProps || {}); 
-                ret.view = blocks.createView(ret.model, klass, _.extend({}, json.viewProps, {parent: parent})); 
+                var ret   = {}; 
+                ret.model = blocks.createModel(json.model || {}); 
+                ret.view  = blocks.createView(ret.model, klass, _.extend({}, json.viewProps, {parent: parent})); 
 
                 //load collection 
                 if(json.subcollection){ 
@@ -69,42 +68,43 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
 
                     //get models and views from substates 
                     _.each(json.subcollection, function(substate){ 
-                        blocks.prototype.createBlock.call(ret.view, substate, function(state){
+                        core.prototype.createBlock.call(ret.view, substate, function(state){
                             arr.push(state); 
                             modarr.add(state.model); 
                             viewarr.push(state.view); 
                             ret.view.trigger('newBlock', state); 
                         }); 
                     }); 
-                }
+                } 
                 if(typeof callback === 'function') callback(ret);           
             }); 
         }, 
 
         //create model and set settings/options 
-        createModel: function( settings, options ){
-            return new Backbone.Model(child.settings || {}, child.options || {}); 
+        createModel: function( child, options ){ 
+            var model = child.model || {}; 
+            return new Backbone.Model(model.settings || {}, model.options || {}); 
         },  
 
         //create view
-        createView: function(model, prototype, props){
+        createView: function(model, klass, props){ 
             var controller = this, options, view; 
 
             //create object and set settings/options 
             options = _.extend({}, props, {model: model}); 
 
             //delete className property so that it doesn't overwrite the prototype classname 
-            if(options.className) delete options.className
+            if(options.className) delete options.className 
 
-            //create and return view
+            //create and return view 
             view = new klass(options); 
             return view; 
         }, 
 
-        ///save the state of the page somewhere
-        /*saveState: function( page, name, location, callback ){
+        ///save the state of the page somewhere 
+        /*saveState: function( page, name, location, callback ){ 
 
-        }, */
+        }, */ 
 
         //IO functions 
         getClass: function(name, callback, ctx){ 
@@ -118,13 +118,13 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
                 cache = []; 
 
             //require classes 
-            require(['require'].concat(classes || []), function(require){
+            require(['require'].concat(classes || []), function(require){ 
                 _.each(classes, function(klass){  
                     var newClass; 
-                    newClass = require(klass); 
+                    if(klass) newClass = require(klass); 
                     cache.push(newClass);           
                 }); 
-                if(typeof callback === 'function'){
+                if(typeof callback === 'function'){ 
                     (cache.length === 1)? callback.call(ctx || null, cache[0]): 
                         callback.call(ctx || null, cache); 
                 } 
@@ -136,17 +136,20 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
             //adds all of the classes from the settings.classes list, prefixes it with require so we can call them later 
             var controller = this; 
 
-            //check to see if the first arg is json or a reference to the json 
-            if(typeof settings === 'string'){
-                $.getScript(settings, function(json){
+            //check to see if the first arg is json or a reference to the json  
+            if(typeof settings === 'string'){ 
+                /*$.getScript(settings, function(json){ 
+                    load(json); 
+                }); */
+                require(['json!'+ settings], function(json){ 
                     load(json); 
                 }); 
-            }else{
+            }else{ 
                 load(settings); 
-            }
+            } 
 
-            //load it and then call the callback
-            var load = function(json){
+            //load it and then call the callback 
+            function load(json){ 
                 var child = {settings: json}; 
 
                 //if user requests a synchronous rendering then it will wait until the page is ready to render
@@ -156,12 +159,12 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
                 controller.loadClasses(['Block', 'Container', 'Page'].concat(json.classes || []), function(){
 
                     //create Page block 
-                    controller.createBlock(json.page.blockClass || 'Page', null, function(page){ 
+                    controller.createBlock(json.content.view.blockClass || 'Page', json.content || {}, function(page){ 
 
                         //start page, if async loading is used then render immediately 
                         child.page = page; 
                         child.href = child.name; 
-                        if(!settings.sync) controller.startPage({page: page}); 
+                        if(!settings.sync) page.view.render(); 
 
                         //cache page 
                         (controller.collection)? 
@@ -178,7 +181,7 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
             var controller = this,
                 numChildren = controller.getNumBlocks(json.subcollection); 
             controller.renderState = _.after(numChildren, function(){ 
-                controller.startPage(); 
+                controller.pages[0].view.render(); 
             }); 
             return this; 
         }, 
@@ -210,5 +213,5 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
 
 
     };  
-    return blocks; 
+    return core; 
 })

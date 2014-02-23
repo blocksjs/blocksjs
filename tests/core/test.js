@@ -1,21 +1,25 @@
 require.config({ 
   baseUrl:'./../../src/classes', 
   waitSeconds: 10, 
-  packages: [
-    {
+  paths: {
+     json:'../requirePlugins/json',
+     text:'../requirePlugins/text',
+  }, 
+  packages: [ 
+    { 
       name: 'core', 
       location: '..', 
-      main:"core"
+      main:"core" 
     }, 
-    {
+    { 
       name: 'jquery', 
       location: 'http://ajax.googleapis.com/ajax/libs/jquery/2.0.3', 
-      main:"jquery.min"
+      main:"jquery.min" 
     }, 
-    {
+    { 
       name: 'underscore', 
       location: '../libs', 
-      main:'underscore-min'
+      main:'underscore-min' 
     }, 
     {
       name: 'backbone', 
@@ -61,7 +65,7 @@ require(['core', 'chai', 'mocha'], function(core, chai){
 
   //Blocks Core API 
   describe('core', function(){ 
-    var blocks = new core;      
+    var blocks = window.blocks = new core;      
 
     //postal 
     describe('#postal', function(){ 
@@ -73,7 +77,7 @@ require(['core', 'chai', 'mocha'], function(core, chai){
     //block list 
     describe('#_blockIds', function(){ 
       it('should exist', function(){ 
-        expect(blocks).to.have.a.property('blockList');  
+        expect(blocks).to.have.a.property('_blockIds');  
       }); 
 
       it('should have update the hash every time a block is created'); 
@@ -88,7 +92,7 @@ require(['core', 'chai', 'mocha'], function(core, chai){
     //userBlockList 
     describe('#_userBlockIds', function(){ 
       it('should exist', function(){ 
-        expect(blocks).to.have.a.property('userBlockList'); 
+        expect(blocks).to.have.a.property('_userBlockIds'); 
       }); 
 
       it('should update only if a created block has a blockId'); 
@@ -101,7 +105,7 @@ require(['core', 'chai', 'mocha'], function(core, chai){
     //classList 
     describe('#classList', function(){ 
       it('should have a class list', function(){ 
-        expect(blocks).to.have.a.property('classList'); 
+        expect(blocks).to.have.a.property('_classList'); 
       });  
 
       it('should have an array for each class loaded in memory');
@@ -114,6 +118,9 @@ require(['core', 'chai', 'mocha'], function(core, chai){
 
     //createBlock 
     describe('#createBlock()', function(){ 
+      it('should exist', function(){
+        expect(blocks).to.have.a.property('createBlock'); 
+      })
 
       describe('#(name, json, callback)', function(){ 
         it('should provide a block state object into the callback based on the settings'); 
@@ -129,10 +136,10 @@ require(['core', 'chai', 'mocha'], function(core, chai){
         it('should create a block state object if name and settings are provided'); 
       }); 
       it('should return an object', function(done){ 
-        var state = blocks.createBlock({}, function(page){ 
+       /* var state = blocks.createBlock({}, function(page){ 
           expect(page).to.exist; 
           done(); 
-        }); 
+        }); */
       }); 
       it('should otherwise return null'); 
     }); 
@@ -157,29 +164,94 @@ require(['core', 'chai', 'mocha'], function(core, chai){
     });    
 
     //getClass
-    describe('#getClass()', function(done){ 
-      it('should put the requested prototype into the callback', function(){ 
-        blocks.getClass('Page', function(klass){ 
+    describe('#getClass()', function(){ 
+      it('should put the requested prototype into the callback', function(done){ 
+        /*blocks.getClass('Page', function(klass){ 
           var blockProto = require('Page'); 
           console.log(blockProto, klass);  
           expect(klass).to.equal(blockProto); 
           done(); 
-        }); 
+        }); */
       }); 
     });   
 
     //loadClasses 
     describe('#loadClasses()', function(){ 
-      it('should return an array'); 
-      it('should return each of the classes with the right prototype in the right order ')
+      it('should return an array of the same length as that passed in', function(done){
+        blocks.loadClasses(['Block', 'Container'], function(classes){
+          expect(classes).to.be.an.instanceof(Array); 
+          expect(classes.length).to.equal(2); 
+          done(); 
+        }); 
+      }); 
+      it('should return each of the classes with the right prototype in the right order', function(done){
+        blocks.loadClasses(['Block', 'Container'], function(classes){
+          var Block = require('Block'); 
+          var Container = require('Container'); 
+          expect(new classes[0]).to.be.an.instanceof(Block); 
+          expect(new classes[1]).to.be.an.instanceof(Container); 
+          done(); 
+        }); 
+      }); 
     }); 
 
     //loadPage 
     describe('#loadPage()', function(){ 
       var json = {}; 
       var json2 = {sync: true}; 
-      it('should be able to load a string reference and load it'); 
-      it('should parse the json if it is already on the page as a Settings variable'); 
+      it('should be able to load a string reference and load it', function(done){
+        blocks.loadPage('../../tests/test.json', function(json){
+          expect(_.isObject(json)).to.be.true; 
+          done(); 
+        }); 
+      }); 
+      it('should parse the json if it is created with json as a first argument (Settings var)', function(done){
+        var blocks2 = new core({
+          "name": "test",
+          "classes": [],
+          "content": {
+            "view": {
+              "x": "0",
+              "y": "0",
+              "z": "0",
+              "autohide": "false",
+              "immutableCSS": "false",
+              "blockClass": "Page"
+            },
+            "subcollection": [
+              {
+                "view": {
+                  "x": "635",
+                  "y": "231",
+                  "z": "0",
+                  "autohide": "false",
+                  "immutableCSS": "false",
+                  "css": {
+                    "position": "fixed",
+                    "width": "200px",
+                    "height": "200px",
+                    "max-height": "100%",
+                    "max-width": "100%",
+                    "text-align": "center",
+                    "border": "1px black dotted",
+                    "background-color": "rgba(100, 100, 100, .7)",
+                    "z-index": "0",
+                    "&:hover": {
+                      "background-color": "rgba(0,0,20,1)",
+                      "color": "white"
+                    }
+                  },
+                  "blockClass": "Block"
+                }
+              },
+            ]
+          }
+        }, function(page){ 
+          console.log('PAGE', page); 
+          expect(_.isObject(page)).to.be.true; 
+          done(); 
+        }); 
+      }); 
       it('should be able to load synchronously'); 
       describe('#callback', function(){ 
         it('should have an object with a page property'); 
