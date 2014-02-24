@@ -99,7 +99,7 @@ require(requireArray, function(Blocks, blockClass, textBlockClass, containerClas
 
 		console.log(Blocks);
 		//basic block with default configurations
-		var blockBasic = new blockClass; //Blocks.createBlock({});
+		var blockBasic = new blockClass(); //Blocks.createBlock({});
 		console.log(blockBasic);
 		//basic block with default configurations created as part of a page
 		var basicPage = {};//Blocks.loadPage(basicPageJSON);
@@ -108,7 +108,9 @@ require(requireArray, function(Blocks, blockClass, textBlockClass, containerClas
 		var textPage = {};//Blocks.loadPage(textPageJSON);
 		var blockTextInPage = {};//basicPage.getBlocksByClassName('TextBlock');
 
-		var blockText = new textBlockClass;
+		var blockText = new textBlockClass();
+		console.log(blockText.get());
+		console.log('FIRST MAJR');
 
 		//block with view config but no model
 		var blockView;
@@ -136,7 +138,7 @@ require(requireArray, function(Blocks, blockClass, textBlockClass, containerClas
 
 				expect(_.isEmpty(resultsBasic)).to.equal(_.isEmpty({}));
 				// expect(resultsPageBasic).to.equal(void 0);
-				expect(resultsText.toString()).to.equal({text:'You should probably fill this with real text :)'}.toString());
+				expect(JSON.stringify(resultsText)).to.equal(JSON.stringify({text:'You should probably fill this with real text :)'}));
 			});
 			it("should return undefined if property doesn't exit", function(){
 				var resultsBasic = blockBasic.get('jeremy');
@@ -264,23 +266,27 @@ require(requireArray, function(Blocks, blockClass, textBlockClass, containerClas
 		describe("#toJSON()", function(){
 			it("should return solely the className if the Block has no extra model or view data", function(){
 				//check for both standard Block and something that extends it
+				blockBasic = new blockClass();
 				var resultsBasic = blockBasic.toJSON();
 				// var resultsPageBasic = blockBasicInPage.toJSON();
 
-				expect(resultsBasic.toString()).to.equal({blockClass:'Block'}.toString());
+				expect(JSON.stringify(resultsBasic)).to.equal(JSON.stringify({blockClass:'Block'}));
 				// expect(resultsPageBasic).to.equal({className:'Block'});
 			});
 			it("should return the user set blockID if a user has set an ID", function(){
 				blockBasic.setID('magicalmoment');
 
-				expect(blockBasic.toJSON().toString()).to.equal({blockClass:'Block',blockID:'magicalmoment'}.toString());
+				expect(JSON.stringify(blockBasic.toJSON())).to.equal(JSON.stringify({blockClass:'Block',blockID:'magicalmoment'}));
 			});
 			it("should return the view attributes if they come set", function(){
-				blockText = new textBlockClass;
-				var resultsText = blockText.toJSON();
+				blockText = undefined;
+				blockText = new textBlockClass();
+				var newResultsText = blockText.toJSON();
 
-				expect(resultsText.toString()).to.equal({className:'TextBlock', text:'You should probably fill this with real text :)'}.toString());
+				console.log(blockText.get());
+				console.log('THIS IS THE GET');
 
+				expect(JSON.stringify(newResultsText)).to.equal(JSON.stringify({blockClass:'TextBlock', attributes:{text:'You should probably fill this with real text :)'}}));
 			});
 			it("should return the model data if model is set", function(){
 				expect(false).to.equal(true);
@@ -298,10 +304,11 @@ require(requireArray, function(Blocks, blockClass, textBlockClass, containerClas
 				expect(resultsText).to.equal({className:'TextBlock', text:'herro', type:'p'});
 			});
 			it("should return the updated view data if extra view attributes are added or updated dynamically", function(){
+				blockText = new textBlockClass();
 				blockText.set('text', 'herro');
 				var resultsText = blockText.toJSON();
 
-				expect(resultsText.toString()).to.equal({className:'TextBlock', text:'herro'}.toString());
+				expect(JSON.stringify(resultsText)).to.equal(JSON.stringify({blockClass:'TextBlock', attributes:{text:'herro'}}));
 				// blockTextInPage.set('text', 'herro');
 				// var resultsText = blockTextInPage.toJSON();
 
@@ -311,7 +318,16 @@ require(requireArray, function(Blocks, blockClass, textBlockClass, containerClas
 
 		//initializes the object
 		describe("#initialize()", function(){
+			it("should set attributes if attributes are passed in as a hash", function(){
+			//hash cannot use the following keys: model, collection, el, id, className, tagName, attributes and events
+				var hash = {'magic':'tragic','tragic':'bronson','number':10};
+				var newBlock = new blockClass(hash);
 
+				expect(JSON.stringify(newBlock.get())).to.equal(JSON.stringify(hash));
+			});
+			it("should create an internal _blockID",function(){
+				
+			});
 		});
 
 		//renders the object
@@ -356,9 +372,7 @@ require(requireArray, function(Blocks, blockClass, textBlockClass, containerClas
 			it("should return container then block for the page class", function(){
 				// var basicPageResults = basicPage.getClassAncestry();
 				// var textPageResults = textPage.getClassAncestry();
-				console.log('jrjrjr');
 				var testPage = new pageClass;
-				console.log('jrjrjr');
 				var resultsPage = testPage.getClassAncestry();
 
 				expect(resultsPage.toString()).to.equal(['Container','Block'].toString());

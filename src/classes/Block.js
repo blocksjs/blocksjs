@@ -6,6 +6,13 @@ define(['backbone'], function(Backbone){
 		defaults: {}, //this should be properties that
 		attributes: {}, //these are attributes that can be altered with get/set calls
 		initialize: function(options){
+			var block = this;
+			console.log('herro');
+			console.log(options);
+			console.log('boop boop');
+			if(options){
+				block.attributes = options;
+			}
 			//_id, children, parents, page, super?, model, attributes
 			//should be determined here 
 		},
@@ -65,6 +72,8 @@ define(['backbone'], function(Backbone){
 			if(!_.isEmpty(block.attributes)){
 				ret.attributes = block.attributes;
 			}
+			if(block.blockID)
+				ret.blockID = block.blockID;
 			return ret; 
 		}, 
 		getClassAncestry: function(){

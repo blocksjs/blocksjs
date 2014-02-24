@@ -59,7 +59,6 @@ require.config({
   ] 
 }); 
 require(['core', 'chai', 'mocha'], function(core, chai){ 
-  var should = chai.should(); 
   var expect = chai.expect; 
   mocha.setup('bdd'); 
 
@@ -117,10 +116,10 @@ require(['core', 'chai', 'mocha'], function(core, chai){
     }); 
 
     //createBlock 
-    /*describe('#createBlock()', function(){ 
+    describe('#createBlock()', function(){ 
       it('should exist', function(){
         expect(blocks).to.have.a.property('createBlock'); 
-      })
+      });
 
       describe('#(name, json, callback)', function(){ 
         it('should provide a block state object into the callback based on the settings', function(done){
@@ -136,7 +135,7 @@ require(['core', 'chai', 'mocha'], function(core, chai){
           },function(block){ 
               expect(block.view).to.be.an.instanceof(require('Container')); 
               expect(block.model.get('x')).to.equal(33); 
-              expect(block.view.get('y')).to.equal('oh heeey'); 
+              expect(block.get('y')).to.equal('oh heeey'); 
               done(); 
           });
         }); 
@@ -173,6 +172,7 @@ require(['core', 'chai', 'mocha'], function(core, chai){
               done(); 
           }); 
         }); 
+      });
       describe('#(option)', function(){ 
         it('should create a block state object if name and settings are provided', function(done){
           var state = blocks.createBlock({}, function(page){ 
@@ -187,7 +187,7 @@ require(['core', 'chai', 'mocha'], function(core, chai){
           done(); 
         }); 
       }); 
-    }); */
+    }); 
 
     //_createModel
     describe('#_createModel()', function(){
