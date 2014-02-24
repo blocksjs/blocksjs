@@ -7,12 +7,8 @@ define(['backbone'], function(Backbone){
 		attributes: {}, //these are attributes that can be altered with get/set calls
 		initialize: function(options){
 			var block = this;
-			console.log('herro');
-			console.log(options);
-			console.log('boop boop');
-			if(options){
-				block.attributes = options;
-			}
+			var attrs = _.omit(options,['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events']); 
+			block.attributes = _.defaults({}, attrs, _.result(this, 'defaults'));
 			//_id, children, parents, page, super?, model, attributes
 			//should be determined here 
 		},
