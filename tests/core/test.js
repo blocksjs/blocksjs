@@ -135,7 +135,8 @@ require(['core', 'chai', 'mocha'], function(core, chai){
           },function(block){ 
               expect(block.view).to.be.an.instanceof(require('Container')); 
               expect(block.model.get('x')).to.equal(33); 
-              expect(block.get('y')).to.equal('oh heeey'); 
+              expect(block.view.get('y')).to.equal(13); 
+              console.log('BLOCK', block); 
               done(); 
           });
         }); 
