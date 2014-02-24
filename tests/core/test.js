@@ -110,39 +110,84 @@ require(['core', 'chai', 'mocha'], function(core, chai){
 
       it('should have an array for each class loaded in memory');
 
-      it('should add the _blockId to the hash when a block is created')
+      it('should add the _blockId to the hash when a block is created'); 
 
       it('should get rid of the id in the hash when the block is removed');
 
     }); 
 
     //createBlock 
-    describe('#createBlock()', function(){ 
+    /*describe('#createBlock()', function(){ 
       it('should exist', function(){
         expect(blocks).to.have.a.property('createBlock'); 
       })
 
       describe('#(name, json, callback)', function(){ 
-        it('should provide a block state object into the callback based on the settings'); 
+        it('should provide a block state object into the callback based on the settings', function(done){
+          blocks.createBlock('Container', {
+            view: {
+              x: 5, 
+              y: 13
+            }, 
+            model: {
+              x:33, 
+              y: 'oh heeey'
+            }
+          },function(block){ 
+              expect(block.view).to.be.an.instanceof(require('Container')); 
+              expect(block.model.get('x')).to.equal(33); 
+              expect(block.view.get('y')).to.equal('oh heeey'); 
+              done(); 
+          });
+        }); 
       }); 
       describe('#(name, callback)', function(){ 
-        it('should provide a default version of the block state object if no settings are give'); 
+        it('should provide a default version of the block state object if no settings are give', function(done){
+          blocks.createBlock('Container', function(block){ 
+              expect(block.view).to.be.an.instanceof(require('Container')); 
+              done(); 
+          });
+        }); 
       }); 
-      describe('#(settings, callback)', function(){ 
-        it('should provide a default version of the [className] state object if settings.view.className is given'); 
-        it('should provide a default version of the block state object if no className is given');
-      }); 
+      describe('#(settings, callback) should work', function(){ 
+        it('if class is specified', function(done){
+          blocks.createBlock(
+
+            //super basic settings with class
+            {
+              view:{
+                blockClass:'Container'
+              }, 
+              model: {}
+            }, 
+
+            //callback
+            function(block){ 
+              expect(block.view).to.be.an.instanceof(require('Container')); 
+              done(); 
+          }); 
+        }); 
+        it('and if no class is specified in view properties create block by default', function(done){
+          blocks.createBlock({}, function(block){ 
+              expect(block.view).to.be.an.instanceof(require('Block')); 
+              done(); 
+          }); 
+        }); 
       describe('#(option)', function(){ 
-        it('should create a block state object if name and settings are provided'); 
+        it('should create a block state object if name and settings are provided', function(done){
+          var state = blocks.createBlock({}, function(page){ 
+            expect(page).to.exist; 
+            done(); 
+          }); 
+        }); 
       }); 
       it('should return an object', function(done){ 
-       /* var state = blocks.createBlock({}, function(page){ 
+        var state = blocks.createBlock({}, function(page){ 
           expect(page).to.exist; 
           done(); 
-        }); */
+        }); 
       }); 
-      it('should otherwise return null'); 
-    }); 
+    }); */
 
     //_createModel
     describe('#_createModel()', function(){
@@ -150,12 +195,39 @@ require(['core', 'chai', 'mocha'], function(core, chai){
         var model = blocks.createModel(); 
         expect(model).to.be.an.instanceof(Backbone.Model); 
       }); 
-      it('should return a model with the properties of the json sent into it'); 
+      it('should return a model with the properties of the json sent into it', function(){
+        var model = blocks.createModel({x: 33}); 
+        expect(model.get('x')).to.equal(33); 
+      }); 
     });   
 
     //_createView
     describe('#_createView()', function(){
-      it('should create the view with the class prototype'); 
+      it('should create the view with the class prototype', function(done){
+        blocks.getClass('Block', function(Block){
+          var model = blocks.createModel(); 
+          var view = blocks.createView(model, Block, {x: 33});
+          expect(view).to.be.an.instanceof(Block); 
+          done(); 
+        });   
+
+      }); 
+      it('should assign the model to the view', function(done){
+        blocks.getClass('Block', function(Block){
+          var model = blocks.createModel(); 
+          var view = blocks.createView(model, Block, {x: 33});
+          expect(view.model).to.equal(model); 
+          done(); 
+        });          
+      }); 
+      it('should automatically assign the initial variables that are passed in', function(done){
+        blocks.getClass('Block', function(Block){
+          var model = blocks.createModel(); 
+          var view = blocks.createView(model, Block, {x: 33});
+          expect(view.get('x')).to.equal(33); 
+          done(); 
+        });         
+      });     
     });   
 
     //saveState 
@@ -166,12 +238,10 @@ require(['core', 'chai', 'mocha'], function(core, chai){
     //getClass
     describe('#getClass()', function(){ 
       it('should put the requested prototype into the callback', function(done){ 
-        /*blocks.getClass('Page', function(klass){ 
-          var blockProto = require('Page'); 
-          console.log(blockProto, klass);  
-          expect(klass).to.equal(blockProto); 
+        blocks.getClass('Container', function(Container){
+          expect(new Container).to.be.an.instanceof(require('Container')); 
           done(); 
-        }); */
+        }); 
       }); 
     });   
 
@@ -247,17 +317,36 @@ require(['core', 'chai', 'mocha'], function(core, chai){
             ]
           }
         }, function(page){ 
-          console.log('PAGE', page); 
           expect(_.isObject(page)).to.be.true; 
           done(); 
         }); 
       }); 
-      it('should be able to load synchronously'); 
+      it('should be able to load synchronously', function(done){
+        blocks.loadPage('../../tests/testSync.json', function(json){
+          expect(_.isObject(json)).to.be.false; 
+          done(); 
+        });
+      }); 
       describe('#callback', function(){ 
-        it('should have an object with a page property'); 
-        it('should have backbone view/model as a part of the conent property'); 
-        it('should also have the same metadata as the original json as settings'); 
-        it('should render the page'); 
+        it('should have backbone view/model as a part of the content property', function(done){
+          blocks.loadPage('../../tests/test.json', function(json){
+            expect(json.content.view).to.exist; 
+            expect(json.content.model).to.exist; 
+            done(); 
+          });
+        }); 
+        it('should also have the same metadata as the original json as settings', function(done){
+          blocks.loadPage('../../tests/test.json', function(json){
+            expect(json.settings).to.exist;  
+            done(); 
+          });
+        }); 
+        it('should render the page', function(done){
+          blocks.loadPage('../../tests/test.json', function(json){
+            expect(json.content.view.el.parentNode).to.not.be.null;
+            done(); 
+          });
+        }); 
       }); 
     }); 
 
@@ -268,7 +357,13 @@ require(['core', 'chai', 'mocha'], function(core, chai){
 
     //getNumBlocks 
     describe('#getNumBlocks()', function(){
-      it('should return the number of blocks on the page'); 
+      it('should return the number of blocks on the page', function(done){
+        blocks.loadPage('../../tests/test.json', function(json){
+          var numChildren = blocks.getNumBlocks([json.settings.content]); 
+          expect(numChildren).to.equal(7); //obtained by looking at the json file and counting the number of objects 
+          done(); 
+        });
+      }); 
     });   
 
     //getBlockById
