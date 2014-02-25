@@ -6,10 +6,17 @@ define(['backbone'], function(Backbone){
 		defaults: {}, //this should be properties that
 		attributes: {}, //these are attributes that can be altered with get/set calls
 		initialize: function(options){
+			if(this.blockClass == 'TextBlock'){
+				console.log('INIT');
+				console.log(options);
+			}
 			var block = this;
-			var attrs = _.omit(options,['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events']); 
+			var attrs = _.omit(options,['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events', 'parent', 'blockClass']); 
 			block.attributes = _.defaults({}, attrs, _.result(this, 'defaults'));
-			//_id, children, parents, page, super?, model, attributes
+			if(this.blockClass == 'TextBlock'){
+				console.log(block.attributes);
+				console.log('JUST FINISHED');
+			}	//_id, children, parents, page, super?, model, attributes
 			//should be determined here 
 		},
 		get: function(key){
@@ -56,6 +63,7 @@ define(['backbone'], function(Backbone){
 		toJSON: function(){
 			var block = this,
 				ret = {}; 
+				ret.view = {};
 			//go through options from prototype 
 			//but set values from this object for export
 			//we only export the required values and not 
@@ -64,12 +72,14 @@ define(['backbone'], function(Backbone){
 				if(block.has(key)) ret[key] = block.get(key); 
 			})
 */			
-			ret.blockClass = block.blockClass;
+			ret.view.blockClass = block.blockClass;
 			if(!_.isEmpty(block.attributes)){
-				ret.attributes = block.attributes;
+				ret.view.attributes = block.attributes;
 			}
 			if(block.blockID)
-				ret.blockID = block.blockID;
+				ret.view.blockID = block.blockID;
+			if(block.model && block.model.attributes && !_.isEmpty(block.model.attributes))
+				ret.model = block.model.attributes;
 			return ret; 
 		}, 
 		getClassAncestry: function(){

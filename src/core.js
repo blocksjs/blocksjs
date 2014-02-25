@@ -74,7 +74,7 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
                 //add model and view 
                 var ret   = {}; 
                 ret.model = blocks.createModel(json.model || {}); 
-                ret.view  = blocks.createView(ret.model, klass, _.extend({}, json.viewProps, {parent: parent})); 
+                ret.view  = blocks.createView(ret.model, klass, _.extend({}, json.view, {parent: parent})); 
 
                 //load collection 
                 if(json.subcollection){ 
