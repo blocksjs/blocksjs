@@ -1,8 +1,8 @@
-define(['backbone'], function(Backbone){
-	var Block = Backbone.View.extend({
+define(['backbone'], function(Backbone){ 
+	var Block = Backbone.View.extend({ 
 		blockClass: 'Block', 
 		superClass: 'Backbone.View', 
-		blockID: null,
+		blockID: null, 
 		defaults: {}, //this should be properties that
 		attributes: {}, //these are attributes that can be altered with get/set calls
 		initialize: function(options){
@@ -33,7 +33,7 @@ define(['backbone'], function(Backbone){
 			} else{
 				block.attributes[key] = value;
 				return block;
-			}
+			} 
 		}, 
 		getID: function(){
 			return this.blockID;
@@ -50,7 +50,11 @@ define(['backbone'], function(Backbone){
 			}
 
 		},
-		remove: function(){}, 
+		remove: function(){
+			Backbone.View.prototype.remove.call(this); 
+			blocks._remove(this); 
+			return this; 
+		}, 
 		subscribe: function(){}, 
 		unsubscribe: function(){}, 
 		toJSON: function(){
@@ -75,7 +79,7 @@ define(['backbone'], function(Backbone){
 		getClassAncestry: function(){
 			var block = this;
 			if(block.blockClass === 'Block')
-				return null;
+				return [];
 			else{
 				var ancestry = [block.superClass];
 				if(block.superClass !== 'Block'){

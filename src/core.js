@@ -29,7 +29,7 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
                 name = args[0]; 
 
                 //allow (name, callback) or (name, json, callback) 
-                (_.isObject(args[1]))? 
+                (!_.isFunction(args[1]))? 
                     json = args[1]: 
                     callback = args[1]; 
 
@@ -70,11 +70,13 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
             }
             //get that specific class and use it 
             blocks.getClass(name, function(klass){ 
-
                 //add model and view 
                 var ret   = {}; 
-                ret.model = blocks.createModel(json.model || {}); 
-                ret.view  = blocks.createView(ret.model, klass, _.extend({}, json.viewProps, {parent: parent})); 
+                ret.model = blocks._createModel(json.model || {}); 
+                ret.view  = blocks._createView(ret.model, klass, _.extend({}, json.view, {
+                    parent: parent
+                }));
+                blocks._set(ret.view); 
 
                 //load collection 
                 if(json.subcollection){ 
@@ -98,12 +100,12 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
         }, 
 
         //create model and set settings/options 
-        createModel: function( settings, options ){ 
+        _createModel: function( settings, options ){ 
             return new Backbone.Model(settings, options); 
         },  
 
         //create view
-        createView: function(model, klass, options){ 
+        _createView: function(model, klass, options){ 
             var controller = this, options, view; 
 
             //add model 
@@ -185,8 +187,8 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
             }; 
             
         },  
-        _loadPageSync: function(json){
-            var controller = this,
+        _loadPageSync: function(json){ 
+            var controller = this, 
                 numChildren = controller.getNumBlocks(json.content); 
 
             controller.renderState = _.after(numChildren, function(){ 
@@ -196,13 +198,55 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
         }, 
 
         //UTILS 
+        //Set _blockID, _userBlockID, and blockClass 
+        _set: function(block){ 
+            var blockId = block._blockID ||_.uniqueId('_block'), 
+                userId  = block.get('blockID'), 
+                classes = block.getClassAncestry().concat(block.blockClass); 
+
+            //set _blockID 
+            block._blockID = blockId; 
+            blocks._blockIds[blockId] = block; 
+
+            //set special user id 
+            if(userId){ 
+                blocks._userBlockIds[userId] = blockId; 
+            } 
+
+            //set classes
+            _.each(classes, function(className){
+                if(className !== 'Block'){
+                    if(!blocks._classList[className]) blocks._classList[className] = []; 
+                    blocks._classList[className].push(blockId); 
+                }
+            }); 
+        },
+        _remove: function(block){
+            var blockId = block._blockID,
+                userId = block.get('blockID'), 
+                classes = block.getClassAncestry(); 
+
+            //remove _blockID
+            block._blockID = blockId; 
+            delete blocks._blockIds[blockId]; 
+
+            //set special user id
+            if(userId){
+                delete blocks._userBlockIds[userId]; 
+            }
+
+            //set classes
+            _.each(classes, function(className){
+                var index = _.indexOf(blocks._classList[className], blockId); 
+                blocks._classList[className].splice(index,1); 
+            }); 
+        }, 
+
         //find number of objects to be rendered from the collection 
         getNumBlocks: function(collection){ 
             var numBlocks = 0; 
-            console.log('JSON BEING PASSED IN', collection); 
             (function recurse(collection){ 
                 _.each(collection, function(child){ 
-                    console.log('child: ', child); 
                     numBlocks++; 
                     if(child.subcollection) recurse(child.subcollection); 
                 }); 
@@ -212,12 +256,12 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
 
         //return block with _blockId
         getBlockById: function(id){
-            return this.blockList[id]; 
+            return this._blockIds[id]; 
         }, 
 
         //get array of .Panel blocks
         getBlocksByClassName: function(className){
-            return this.blocks[classname]; 
+            return this._classList[className]; 
         }, 
 
         //getBlocksByEnvironmentType: function(){} //get all processing objects, Threejs objects, canvas objects etc...
@@ -225,4 +269,4 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
 
     };  
     return core; 
-})
+}); 

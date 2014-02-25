@@ -79,13 +79,21 @@ require(['core', 'chai', 'mocha'], function(core, chai){
         expect(blocks).to.have.a.property('_blockIds');  
       }); 
 
-      it('should have update the hash every time a block is created'); 
+      it('should have update the hash every time a block is created', function(done){
+        blocks.createBlock('Block', function(block){
+          expect(blocks._blockIds[block.view._blockID]).to.equal(block.view); 
+          done(); 
+        }); 
+      }); 
 
-      it('should update every time a block is deleted'); 
-
-      it('should not contain special ids that users set'); 
-
-      it('should have a direct reference to each object in the hash'); 
+      it('should update every time a block is deleted', function(done){
+        blocks.createBlock('Block', function(block){
+          var blockId = block.view._blockID; 
+          block.view.remove(); 
+          expect(blocks._blockIds[blockId]).to.not.exist; 
+          done(); 
+        }); 
+      });  
     });     
 
     //userBlockList 
@@ -94,24 +102,72 @@ require(['core', 'chai', 'mocha'], function(core, chai){
         expect(blocks).to.have.a.property('_userBlockIds'); 
       }); 
 
-      it('should update only if a created block has a blockId'); 
+      it('should update when a created block has a blockId', function(done){
+        blocks.createBlock('Block', {
+          model:{}, 
+          view:{
+            blockID: 'mySpecialClass'
+          }
+        }, function(block){
+          expect(blocks._userBlockIds[block.view.get('blockID')]).to.equal(block.view._blockID); 
+          done(); 
+        }); 
+      }); 
 
-      it('should have a reference to any _blockId put in the hash');
-
-      it('should get rid of the objects in the hash when the block is removed');  
+      it('should get rid of the objects in the hash when the block is removed', function(done){
+        blocks.createBlock('Block', { 
+          model:{}, 
+          view:{ 
+            blockID: 'mySpecialClass2' 
+          } 
+        }, function(block){ 
+          var blockID = block.view.get('blockID'); 
+          block.view.remove(); 
+          expect(blocks._userBlockIds[blockID]).to.not.exist; 
+          done(); 
+        }); 
+      });  
     }); 
 
     //classList 
     describe('#classList', function(){ 
-      it('should have a class list', function(){ 
+      it('should exist', function(){ 
         expect(blocks).to.have.a.property('_classList'); 
       });  
 
-      it('should have an array for each class loaded in memory');
+      it('should add the _blockId to the hash when a block is created', function(done){
+        blocks.createBlock('Container', { 
+          model:{}, 
+          view:{ 
+            blockID: 'mySpecialClass' 
+          } 
+        }, function(block){ 
+          var classes = block.view.getClassAncestry().concat(block.view.blockClass);
+          var maybe; 
+          _.each(classes, function(className){ 
+            if(className !== 'Block'){ 
+              maybe = _.find(blocks._classList[className], function(id){ 
+                return id === block.view._blockID; 
+              }); 
+            } 
+          }); 
+          expect(maybe).to.exist;  
+          done(); 
+        }); 
+      }); 
 
-      it('should add the _blockId to the hash when a block is created'); 
-
-      it('should get rid of the id in the hash when the block is removed');
+      it('should get rid of the id in the hash when the block is removed', function(done){
+        blocks.createBlock('Container', { 
+          model:{}, 
+          view:{ 
+            blockID: 'mySpecialClass' 
+          } 
+        }, function(block){ 
+          var classes = block.view.getClassAncestry().concat(block.view.blockClass);
+          expect(blocks._userBlockIds[block.view.get('blockID')]).to.equal(block.view._blockID); 
+          done(); 
+        }); 
+      });
 
     }); 
 
@@ -136,16 +192,16 @@ require(['core', 'chai', 'mocha'], function(core, chai){
               expect(block.view).to.be.an.instanceof(require('Container')); 
               expect(block.model.get('x')).to.equal(33); 
               expect(block.view.get('y')).to.equal(13); 
-              console.log('BLOCK', block); 
+              
               done(); 
           });
         }); 
       }); 
       describe('#(name, callback)', function(){ 
-        it('should provide a default version of the block state object if no settings are give', function(done){
+        it('should provide a default version of the block state object if no settings are given', function(done){
           blocks.createBlock('Container', function(block){ 
-              expect(block.view).to.be.an.instanceof(require('Container')); 
-              done(); 
+            expect(block.view).to.be.an.instanceof(require('Container')); 
+            done(); 
           });
         }); 
       }); 
@@ -193,11 +249,11 @@ require(['core', 'chai', 'mocha'], function(core, chai){
     //_createModel
     describe('#_createModel()', function(){
       it('should return a Backbone.Model if nothing is provided',function(){
-        var model = blocks.createModel(); 
+        var model = blocks._createModel(); 
         expect(model).to.be.an.instanceof(Backbone.Model); 
       }); 
       it('should return a model with the properties of the json sent into it', function(){
-        var model = blocks.createModel({x: 33}); 
+        var model = blocks._createModel({x: 33}); 
         expect(model.get('x')).to.equal(33); 
       }); 
     });   
@@ -206,8 +262,8 @@ require(['core', 'chai', 'mocha'], function(core, chai){
     describe('#_createView()', function(){
       it('should create the view with the class prototype', function(done){
         blocks.getClass('Block', function(Block){
-          var model = blocks.createModel(); 
-          var view = blocks.createView(model, Block, {x: 33});
+          var model = blocks._createModel(); 
+          var view = blocks._createView(model, Block, {x: 33});
           expect(view).to.be.an.instanceof(Block); 
           done(); 
         });   
@@ -215,16 +271,16 @@ require(['core', 'chai', 'mocha'], function(core, chai){
       }); 
       it('should assign the model to the view', function(done){
         blocks.getClass('Block', function(Block){
-          var model = blocks.createModel(); 
-          var view = blocks.createView(model, Block, {x: 33});
+          var model = blocks._createModel(); 
+          var view = blocks._createView(model, Block, {x: 33});
           expect(view.model).to.equal(model); 
           done(); 
         });          
       }); 
       it('should automatically assign the initial variables that are passed in', function(done){
         blocks.getClass('Block', function(Block){
-          var model = blocks.createModel(); 
-          var view = blocks.createView(model, Block, {x: 33});
+          var model = blocks._createModel(); 
+          var view = blocks._createView(model, Block, {x: 33});
           expect(view.get('x')).to.equal(33); 
           done(); 
         });         
@@ -322,12 +378,12 @@ require(['core', 'chai', 'mocha'], function(core, chai){
           done(); 
         }); 
       }); 
-      it('should be able to load synchronously', function(done){
+      it('should be able to load synchronously'/*, function(done){
         blocks.loadPage('../../tests/testSync.json', function(json){
           expect(_.isObject(json)).to.be.false; 
           done(); 
         });
-      }); 
+      }*/); 
       describe('#callback', function(){ 
         it('should have backbone view/model as a part of the content property', function(done){
           blocks.loadPage('../../tests/test.json', function(json){
@@ -369,19 +425,26 @@ require(['core', 'chai', 'mocha'], function(core, chai){
 
     //getBlockById
     describe('#getBlockById()', function(){
-      it('should return the block that has the same id as the one passed in (special or not)'); 
+      it('should return the block that has that _blockID', function(done){
+        blocks.createBlock('Container', function(block){ 
+          var blockID = block.view._blockID; 
+          expect(blocks.getBlockById(blockID)).to.equal(block.view); 
+          done(); 
+        });
+      }); 
     });   
 
     //getBlocksByClassName
     describe('#getBlocksByClassName()', function(){
-      it('should return an array'); 
-      it('should return an array of all blocks with this blockClass'); 
-    });   
-
-    //getBlocksByEnvironmentType
-    describe('#getBlocksByEnvironmentType()', function(){
-      it('should return all blocks of the given type (threejs, processing etc)'); 
-    });   
+      it('should return an array of all blocks with this blockClass', function(done){
+        blocks.createBlock('Container', function(block){ 
+          var classes = blocks.getBlocksByClassName('Container'); 
+          expect(classes).to.be.an.instanceof(Array); 
+          expect(classes).to.have.length.above(0); 
+          done(); 
+        });
+      }); 
+    });    
   }); 
 
   mocha.run(); 
