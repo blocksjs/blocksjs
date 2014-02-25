@@ -72,8 +72,11 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
             blocks.getClass(blockClass, function(klass){ 
                 //add model and view 
                 var ret   = {}; 
-                ret.model = blocks.createModel(json.model || {}); 
-                ret.view  = blocks.createView(ret.model, klass, _.extend({}, json.view, {parent: parent})); 
+                ret.model = blocks._createModel(json.model || {}); 
+                ret.view  = blocks._createView(ret.model, klass, _.extend({}, json.view, {
+                    parent: parent
+                }));
+                blocks._set(ret.view); 
 
                 //load collection 
                 if(json.subcollection){ 
@@ -253,7 +256,7 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
 
         //return block with _blockId
         getBlockById: function(id){
-            return this.blockList[id]; 
+            return this._blockIds[id]; 
         }, 
 
         //get array of .Panel blocks
