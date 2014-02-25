@@ -187,8 +187,8 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
             }; 
             
         },  
-        _loadPageSync: function(json){ 
-            var controller = this, 
+        _loadPageSync: function(json){
+            var controller = this,
                 numChildren = controller.getNumBlocks(json.content); 
 
             controller.renderState = _.after(numChildren, function(){ 
