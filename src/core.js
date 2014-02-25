@@ -21,12 +21,12 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
             var parent = this, 
                 blocks = window.blocks, 
                 args = Array.prototype.slice.call(arguments), 
-                name = '', json = {}, callback; 
+                blockClass = '', json = {}, callback; 
 
             //check that the first arg is a name, if not then it should just be the settings json
             if(_.isString(args[0])){
                 //first argument is name
-                name = args[0]; 
+                blockClass = args[0]; 
 
                 //allow (name, callback) or (name, json, callback) 
                 (!_.isFunction(args[1]))? 
@@ -54,9 +54,9 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
                 else{ 
 
                     //name is...
-                    name = 
-                        //either the name property
-                        (args[0].name)? args[0].name: 
+                    blockClass = 
+                        //either the blockClass property
+                        (args[0].blockClass)? args[0].blockClass: 
 
                         //or view.blockClass property
                         (args[0].view && args[0].view.blockClass)?   args[0].view.blockClass: 
@@ -69,7 +69,7 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
                 }
             }
             //get that specific class and use it 
-            blocks.getClass(name, function(klass){ 
+            blocks.getClass(blockClass, function(klass){ 
                 //add model and view 
                 var ret   = {}; 
                 ret.model = blocks._createModel(json.model || {}); 

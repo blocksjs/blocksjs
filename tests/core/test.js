@@ -423,14 +423,14 @@ require(['core', 'chai', 'mocha'], function(core, chai){
       }); 
     });   
 
-    //getBlockById
-    describe('#getBlockById()', function(){
+    //getBlockById 
+    describe('#getBlockById()', function(){ 
       it('should return the block that has that _blockID', function(done){
         blocks.createBlock('Container', function(block){ 
           var blockID = block.view._blockID; 
           expect(blocks.getBlockById(blockID)).to.equal(block.view); 
           done(); 
-        });
+        }); 
       }); 
     });   
 
