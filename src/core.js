@@ -72,11 +72,8 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
             blocks.getClass(blockClass, function(klass){ 
                 //add model and view 
                 var ret   = {}; 
-                ret.model = blocks._createModel(json.model || {}); 
-                ret.view  = blocks._createView(ret.model, klass, _.extend({}, json.view, {
-                    parent: parent
-                }));
-                blocks._set(ret.view); 
+                ret.model = blocks.createModel(json.model || {}); 
+                ret.view  = blocks.createView(ret.model, klass, _.extend({}, json.view, {parent: parent})); 
 
                 //load collection 
                 if(json.subcollection){ 
@@ -187,8 +184,8 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
             }; 
             
         },  
-        _loadPageSync: function(json){ 
-            var controller = this, 
+        _loadPageSync: function(json){
+            var controller = this,
                 numChildren = controller.getNumBlocks(json.content); 
 
             controller.renderState = _.after(numChildren, function(){ 
@@ -256,7 +253,7 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
 
         //return block with _blockId
         getBlockById: function(id){
-            return this._blockIds[id]; 
+            return this.blockList[id]; 
         }, 
 
         //get array of .Panel blocks
