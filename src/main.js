@@ -1,6 +1,10 @@
 require.config({ 
-	baseUrl:'./src/classes', 
+	baseUrl:'/src/classes', 
 	waitSeconds: 10, 
+	paths : {
+	    text : '../requirePlugins/text', //text plugin
+	    json : '../requirePlugins/json' //json plugin
+	  },
 	packages: [
 		{
 			name: 'core', 
@@ -28,18 +32,19 @@ require.config({
 			main:'less'
 		},
 		{
-			name: 'postal',
-			location: '../libs',
-			main: 'postal'
-		},
-		{
-			name: 'postal.when',
-			location: '../libs',
-			main: 'postal.when'
-		},
+			name: 'postal', 
+			location: '../libs', 
+			main: 'postal' 
+		}, 
+		{ 
+			name: 'postal.when', 
+			location: '../libs', 
+			main: 'postal.when' 
+		}, 
 	]
 }); 
-require(['core'], function(core){
-	//start module 
-	var blocks = window.blocks = new core; 
+require(['core', 'json!/src/index.json'], function(core, settings){
+	var blocks = window.blocks = new core(settings, function(){
+		//start module 
+	}); 
 }); 

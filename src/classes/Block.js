@@ -3,22 +3,35 @@ define(['backbone'], function(Backbone){
 		blockClass: 'Block', 
 		superClass: 'Backbone.View', 
 		blockID: null, 
-		defaults: {}, //this should be properties that
-		attributes: {}, //these are attributes that can be altered with get/set calls
-		initialize: function(options){
-			if(this.blockClass == 'TextBlock'){
-				console.log('INIT');
-				console.log(options);
-			}
-			var block = this;
+		defaults: {}, //this should be properties that 
+		attributes: {}, //these are attributes that can be altered with get/set calls 
+		initialize: function(options){ 
+			var block = this; 
+
+			//set block specific fields
+			if(options && options._blockID) block._blockID = options._blockID; 
+			if(options && options.blockID) block.blockID = options.blockID; 
+			if(options && options.parent) this.parent = options.parent; 
+
+			//extend whitelisted attributes from defaults with user options
 			var attrs = _.omit(options,['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events', 'parent', 'blockClass']); 
-			block.attributes = _.defaults({}, attrs, _.result(this, 'defaults'));
-			if(this.blockClass == 'TextBlock'){
-				console.log(block.attributes);
-				console.log('JUST FINISHED');
-			}	//_id, children, parents, page, super?, model, attributes
-			//should be determined here 
-		},
+			block.attributes = _.defaults({}, attrs, _.result(this, 'defaults')); 
+
+
+			//start off events
+			var channel = postal.channel(); 
+			var subscription = channel.subscribe('pageRender', function(){
+				console.log('MEEEEE', block); 
+			}); 
+			block.subscriptions = [subscription]; 
+
+			//parent page 
+			this.page = (function findPage(child){ 
+				return 	(child.parent && child.parent.parent)? findPage(child.parent): 
+						(child.parent !== blocks)? child.parent: 
+						child; 
+			})(this); 
+		}, 
 		get: function(key){
 			var block = this;
 			if(!key){ //if no parameters passed in
@@ -55,7 +68,6 @@ define(['backbone'], function(Backbone){
 				block.blockID = newID;
 				return block;
 			}
-
 		},
 		remove: function(){
 			Backbone.View.prototype.remove.call(this); 
@@ -64,26 +76,32 @@ define(['backbone'], function(Backbone){
 		}, 
 		subscribe: function(){}, 
 		unsubscribe: function(){}, 
-		toJSON: function(){
-			var block = this,
+		saveState: function(){
+			var state, arr; 
+			state = {}; 
+
+			//set model and view 
+			state.view = this.toJSON(); 
+			state.model = this.model.toJSON(); 
+
+			return state; 
+		}, 
+		toJSON: function(){ 
+			var block = this, 
 				ret = {}; 
-				ret.view = {};
-			//go through options from prototype 
-			//but set values from this object for export
-			//we only export the required values and not 
-			//extra things determined at runtime (those would be based on initial options)
-/*			_.each(this.prototype.options, function(value, key){
-				if(block.has(key)) ret[key] = block.get(key); 
-			})
-*/			
+				ret.view = {}, 
+				targets = _.extend(block.defaults, {css:''}); 
+
+			//get defaults for returning 
+			_.each(targets, function(value, key){
+				if(block.attributes.hasOwnProperty(key)) ret.view[key] = block.get(key); 
+			}); 
+
+			//add blockClass
 			ret.view.blockClass = block.blockClass;
-			if(!_.isEmpty(block.attributes)){
-				ret.view.attributes = block.attributes;
-			}
-			if(block.blockID)
-				ret.view.blockID = block.blockID;
-			if(block.model && block.model.attributes && !_.isEmpty(block.model.attributes))
-				ret.model = block.model.attributes;
+			if(block.blockID) ret.view.blockID = block.blockID;
+			
+			if(block.model) ret.model = block.model.toJSON();
 			return ret; 
 		}, 
 		getClassAncestry: function(){
@@ -98,7 +116,9 @@ define(['backbone'], function(Backbone){
 				return ancestry;
 			}
 		},
-		render: function(){} //this should actualize the state of the object, NOT deal with creating models
+		render: function(){
+			return this; 
+		} //this should actualize the state of the object, NOT deal with creating models
 	}); 
 	return Block; 
 }); 
