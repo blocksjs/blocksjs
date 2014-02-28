@@ -66,13 +66,6 @@ require(['core', 'chai', 'mocha'], function(core, chai){
   describe('core', function(){ 
     var blocks = window.blocks = new core;      
 
-    //postal 
-    describe('#postal', function(){ 
-      it('should exist', function(){ 
-        expect(blocks).to.have.a.property('postal'); 
-      }); 
-    }); 
-
     //block list 
     describe('#_blockIds', function(){ 
       it('should exist', function(){ 
@@ -206,18 +199,18 @@ require(['core', 'chai', 'mocha'], function(core, chai){
         }); 
       }); 
       describe('#(settings, callback) should work', function(){ 
-        it('if class is specified', function(done){
-          blocks.createBlock(
+        it('if class is specified', function(done){ 
+          blocks.createBlock( 
 
-            //super basic settings with class
-            {
-              view:{
-                blockClass:'Container'
+            //super basic settings with class 
+            { 
+              view:{ 
+                blockClass:'Container' 
               }, 
-              model: {}
+              model: {} 
             }, 
 
-            //callback
+            //callback 
             function(block){ 
               expect(block.view).to.be.an.instanceof(require('Container')); 
               done(); 
@@ -231,19 +224,32 @@ require(['core', 'chai', 'mocha'], function(core, chai){
         }); 
       });
       describe('#(option)', function(){ 
-        it('should create a block state object if name and settings are provided', function(done){
-          var state = blocks.createBlock({}, function(page){ 
-            expect(page).to.exist; 
+        it('should create a block state object if blockClass and model/view settings are provided', function(done){
+          blocks.createBlock({
+            blockClass: 'Block', 
+            model:{
+              woop: true
+            }, 
+            view: {
+              'ohheyyy':'ohhhyyyy back'
+            }
+          }, function(block){ 
+            expect(block).to.exist; 
             done(); 
           }); 
         }); 
       }); 
-      it('should return an object', function(done){ 
-        var state = blocks.createBlock({}, function(page){ 
-          expect(page).to.exist; 
-          done(); 
+      describe('parent and _blockID', function(){
+        it('should return a view with a _blockID and parent (required)', function(done){
+          blocks.createBlock('Block', function(block){
+            var parent = block.view.parent; 
+            var id = block.view._blockID;
+            expect(parent).to.exist; 
+            expect(id).to.exist;  
+            done(); 
+          }); 
         }); 
-      }); 
+      });       
     }); 
 
     //_createModel
@@ -400,7 +406,7 @@ require(['core', 'chai', 'mocha'], function(core, chai){
         }); 
         it('should render the page', function(done){
           blocks.loadPage('../../tests/test.json', function(json){
-            expect(json.content.view.el.parentNode).to.not.be.null;
+            expect(document.contains(json.content.view)).to.not.be.null;
             done(); 
           });
         }); 
@@ -413,13 +419,13 @@ require(['core', 'chai', 'mocha'], function(core, chai){
     });   
 
     //getNumBlocks 
-    describe('#getNumBlocks()', function(){
-      it('should return the number of blocks on the page', function(done){
-        blocks.loadPage('../../tests/test.json', function(json){
+    describe('#getNumBlocks()', function(){ 
+      it('should return the number of blocks on the page', function(done){ 
+        blocks.loadPage('../../tests/test.json', function(json){ 
           var numChildren = blocks.getNumBlocks([json.settings.content]); 
           expect(numChildren).to.equal(7); //obtained by looking at the json file and counting the number of objects 
           done(); 
-        });
+        }); 
       }); 
     });   
 
@@ -434,7 +440,7 @@ require(['core', 'chai', 'mocha'], function(core, chai){
       }); 
     });   
 
-    //getBlocksByClassName
+    //getBlocksByClassName 
     describe('#getBlocksByClassName()', function(){
       it('should return an array of all blocks with this blockClass', function(done){
         blocks.createBlock('Container', function(block){ 

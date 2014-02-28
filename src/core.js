@@ -7,9 +7,9 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
         //I vote for that!!!! 
         var controller = this; 
         if(settings) this.loadPage(settings, callback); 
+        window.postal = postal; 
     }; 
     core.prototype = { 
-        postal: postal, 
         _blockIds: {}, //a hash of all blocks by id and the object associated with that id 
         _userBlockIds: {}, //a hash of special Ids users provide for blocks with the value being the _blockId of the object 
         _classList: {}, //list of classes and an array of blockIds for each of those classes 
@@ -43,7 +43,7 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
                 if(_.isFunction(args[1])){
 
                     //if the json has a view.blockClass property, else Block
-                    name = (args[0].view && args[0].view.blockClass)?
+                    blockClass = (args[0].view && args[0].view.blockClass)?
                                 args[0].view.blockClass: 
                                 'Block'; 
 
@@ -55,6 +55,7 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
 
                     //name is...
                     blockClass = 
+
                         //either the blockClass property
                         (args[0].blockClass)? args[0].blockClass: 
 
@@ -68,29 +69,32 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
                     callback = args[0].callback || null; 
                 }
             }
+
             //get that specific class and use it 
             blocks.getClass(blockClass, function(klass){ 
                 //add model and view 
                 var ret   = {}; 
                 ret.model = blocks._createModel(json.model || {}); 
-                ret.view  = blocks._createView(ret.model, klass, _.extend({}, json.view, {
-                    parent: parent
-                }));
+                ret.view  = blocks._createView(ret.model, klass, _.extend({}, json.view, { 
+                    parent: parent 
+                })); 
                 blocks._set(ret.view); 
+                if(parent.model && parent.model.subcollection) parent.model.subcollection.add(ret.model); 
+                if(parent.subcollection) parent.subcollection.add(ret.view); 
 
                 //load collection 
                 if(json.subcollection){ 
                     var arr, modarr, viewarr; 
                     ret.subcollection = arr = []; 
                     modarr = ret.model.subcollection = new Backbone.Collection(); 
-                    viewarr = ret.view.subviews = [];  
+                    viewarr = ret.view.subcollection;  
 
                     //get models and views from substates 
                     _.each(json.subcollection, function(substate){ 
                         core.prototype.createBlock.call(ret.view, substate, function(state){
                             arr.push(state); 
                             modarr.add(state.model); 
-                            viewarr.push(state.view); 
+                            viewarr.add(state.view); 
                             ret.view.trigger('newBlock', state); 
                         }); 
                     }); 
@@ -105,14 +109,16 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
         },  
 
         //create view
-        _createView: function(model, klass, options){ 
-            var controller = this, options, view; 
+        _createView: function(model, klass, attrs){ 
+            var controller = this, view;
+            attrs = attrs || {};  
 
             //add model 
-            _.extend(options, {model: model}); 
+            var id = _.uniqueId('_block'); 
+            _.extend(attrs, {model: model, _blockID: id}); 
 
             //create and return view 
-            return new klass(options); 
+            return new klass(attrs); 
         }, 
 
         ///save the state of the page somewhere 
@@ -184,8 +190,7 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
                         if(typeof callback === 'function') callback(child);  
                     }); 
                 }); 
-            }; 
-            
+            };             
         },  
         _loadPageSync: function(json){
             var controller = this,
@@ -198,14 +203,13 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
         }, 
 
         //UTILS 
-        //Set _blockID, _userBlockID, and blockClass 
+        //Set _userBlockID, and blockClass 
         _set: function(block){ 
-            var blockId = block._blockID ||_.uniqueId('_block'), 
+            var blockId = block._blockID, 
                 userId  = block.get('blockID'), 
                 classes = block.getClassAncestry().concat(block.blockClass); 
 
             //set _blockID 
-            block._blockID = blockId; 
             blocks._blockIds[blockId] = block; 
 
             //set special user id 
@@ -213,8 +217,8 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
                 blocks._userBlockIds[userId] = blockId; 
             } 
 
-            //set classes
-            _.each(classes, function(className){
+            //set classes 
+            _.each(classes, function(className){ 
                 if(className !== 'Block'){
                     if(!blocks._classList[className]) blocks._classList[className] = []; 
                     blocks._classList[className].push(blockId); 

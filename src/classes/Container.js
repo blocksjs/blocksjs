@@ -1,71 +1,60 @@
-define(["Block"], function(Block){
-	var Container = Block.extend({
+define(["Block", "BlockCollection"], function(Block, BlockCollection){ 
+	var Container = Block.extend({ 
 		blockClass: 'Container', 
-		super: Block.prototype, 
-		superClass: 'Block',
-		// subcollection:[],
-/*		initialize: function(options){
-			this.super.initialize.call(this, options); 
-			this.subcollection = new Backbone.Collection(options.subcollection || []); 
-		},
-*/		create: function(json){}, 
-		render: function(){
-			_.each(this.subviews, function(subview){
-				subview.render();
-			});
+		superClass: 'Block', 
+		initialize: function(attributes){ 
+			Block.prototype.initialize.call(this, attributes); 
+			var attrs = attributes || {}; 
+			this.subcollection = this.children = new BlockCollection(attrs.subcollection || []); 
 		}, 
-		/*renderBlock: function(){
-		   	var view, block; 
-	   		block = this; 
-	   		view = false; 
-
-	   		//return the view that matches that model 
+		createBlock: function(){ 
+			var args = Array.prototype.slice.call(arguments); 
+			blocks.createBlock.apply(this, args); 
+			return this; 
+		}, 
+		createView: function(model, className, attributes, callback){ 
+			var container = this; 
+			blocks.getClass(className || 'Block', function(klass){ 
+				var view = blocks._createView(model, klass, attributes); 
+				blocks._set(view); //register it with blocks 
+				container.subcollection.add(view); //add to the collection 
+				if(_.isFunction(callback)) callback(view); 
+			}); 					
+		}, 
+		render: function(){ 	
+			var container = this; 
+			//render data from the blocks 
+			if( this.model.subcollection ){ 
+				//this.model.subcollection.each(this.renderBlock, this); 
+				_.each(this.model.subcollection.models, function(model){
+					container.renderBlock(model); 
+				}); 
+			} 
+		    return this; 
+	   	}, 	
+	   	//has to do this for each block in collection 
+		//renderBlock: function(model){}, 
+		_verify: function(model){ 
+			var ret = false; 
+			//return the view that matches that model 
 	   		_.each(this.subviews, function(subview){ 
-	   			(subview.model === model) ? view = subview : false; 
+	   			(subview.model === model) ? ret = subview : false; 
 	   		}); 
-	   		//create view if it doesn't already exist and append to this
-	   		if(!view){ 
-	   			this.createView( model, null, function( newView ){
-	   				//add to el 
-		   			block.$el.append(newView.render().el); 
-		   			return newView; 
-	   			}, block); 
-	   		}else{ 
-	   			//otherwise just have it render itself 
-	   			var page = null; 
-	   			if(!view.page){ 
-	   				page = 	(view.parent && !view.parent.parent)? view.parent: 
-	   						(block.page)? block.page: 
-	   						block; 
-	   			} 
-	   			 
-	   			view.page = page; 
-	   			block.$el.append(view.render().el); 
-		   		return view; 
-	   		} 	
-		
-		}, */ //has to do this for each block in collection 
-		toJSON: function(){
-			var block = this;
-			console.log('herrroooo');
-			var output = block.super.toJSON.call(block);
+	   		console.log('RET FROM _VERIFY IN CONTAINER', ret); 
+	   		return ret; 
+		}, 
+		toJSON: function(){ 
+			var container = this; 
+			var output = Block.prototype.toJSON.call(this); 
 			//console.log(block.subviews);
-			if(block.subviews && block.subviews.length > 0){
-				output.subcollection = [];
-				for(var i in block.subviews){
-					output.subcollection.push(block.subviews[i].toJSON());
-				}
-			}
-			return output;
-		}, //would be different because has to go through collection
-		getClassList: function(){}, //get classes array from our collectin object 
-		//These functions would be used in the Collection
-		//This should be separated as a separate object 
-		/*addToCollection: function(){}, 
-		remove: function(view/number){},
-		reset: function(){}, 
-		blockType: 'defaultBlockType'
-		*/
+			if(container.subcollection && container.subcollection.length > 0){
+				output.subcollection = []; 
+				container.subcollection.each(function(block){
+					output.subcollection.push(block.toJSON());
+				}); 
+			} 
+			return output; 
+		}, 
 	}); 
 	return Container; 
 }); 

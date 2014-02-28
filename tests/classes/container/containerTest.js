@@ -79,15 +79,11 @@ require.config({
 
   ] 
 }); 
-var requireArray = ['core','Block','TextBlock','Container','Page', 'chai'];
-requireArray.push('json!../../tests/classes/block/testingPageBasicBlock.json');
-requireArray.push('json!../../tests/classes/block/testingPageTextBlock.json');
-requireArray.push('mocha');
 
-require(requireArray, function(Blocks, blockClass, textBlockClass, containerClass, pageClass, chai, basicPageJSON, textPageJSON){ 
+require(['core', 'chai', 'mocha'], function(core, chai){ 
   var expect = chai.expect; 
   mocha.setup('bdd'); 
-  blocks = new Blocks(); 
+  blocks = new core; 
 
 	describe("Container", function(){
 
@@ -116,22 +112,13 @@ require(requireArray, function(Blocks, blockClass, textBlockClass, containerClas
     blocks.createBlock('Container', settingses,
       function(fullContainer){
 
-        console.log('FULL CONTAINER TIME');
-        console.log(fullContainer);
-
     		//this contains the different blocks within this container
     		describe("#subcollection",function(){
     			it("should exist",function(done){
               expect(fullContainer).to.have.a.property('subcollection');
               done();
-/*            what happens with an empty container?
-
-blocks.createBlock('Container',{},function(emptyContainer){
-              expect(emptyContainer).to.have.a.property('subcollection');  
-              done();
-            }); 
-*/    			});
-    		});
+    			}); 
+    		}); 
 
         //create a block and add to the collection.
         describe("#create()", function(){
@@ -145,10 +132,11 @@ blocks.createBlock('Container',{},function(emptyContainer){
           it("should set the model and view to the settings passed in", function(done){
             blocks.createBlock('Container',{},function(emptyContainer){
               emptyContainer.view.create({model:{'Jarvis':'the dude'},view:{blockClass:'TextBlock'}});
-              console.log(emptyContainer.view.toJSON());
               done();
             }); 
           });
+          it('should automatically set the container as the parent');
+          it('should automatically set the view in the subcollection');  
         });
 
         //render out the collection of blocks within the container
@@ -156,41 +144,35 @@ blocks.createBlock('Container',{},function(emptyContainer){
           it("should exist", function(){
             expect(fullContainer.view).to.have.a.property('render');
           });
-          it("should render everything within the subcollection", function(){
-            expect(emptyContainer)
-          });
         });
 
         //render out one particular block within the container
-        describe("#renderBlock()", function(){
-          it("should exist", function(){
+        describe("#renderBlock()", function(){ 
+          it("should exist", function(){ 
 
-          });
-          it("should make sure that the block has a view", function(){
+          }); 
+        }); 
 
-          });
-          it("should make sure that the block has a model", function(){
-
-          });
-          it("should render the block", function(){
-
-          });
-        });
-
-        describe("#toJSON()", function(){
+        describe("#toJSON()", function(){ 
           it("should return the JSON output of all the blocks within it",function(){
-            console.log('TO JSON');
-            console.log(fullContainer.view.toJSON());
-            console.log('JSON TO');
             expect(JSON.stringify(fullContainer.view.toJSON())).to.equal(JSON.stringify({
-              view:{blockClass:'Container'},
-              subcollection: settingses.subcollection
-            }));
-          });
-          it("should return each JSON as a 'view'+'data' pair", function(){
+              view:{blockClass:'Container'}, 
+              subcollection: settingses.subcollection 
+            })); 
+          }); 
+          it("should return each JSON as a 'view'+'data' pair", function(){ 
 
-          });
-        });
+          }); 
+        }); 
+
+        describe('#_verify()', function(){ 
+          it('should check to see that each of the models in the models subcollection has a view', function(){
+
+          }); 
+          it('should check to see that each of the views has a model', function(done){
+
+          }); 
+        }); 
 
       mocha.run();
       });
