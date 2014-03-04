@@ -27,9 +27,14 @@ define(['Container', 'HTMLBlock'], function(Container, HTMLBlock){
 				return this; 
 			}, 
 			addBlock: function(block){
-				if(this.page) console.log(this.page); 
+				var container = this; 
 				this.$el.append(block.render().el); 
-				this.page.renderCSS(); 
+				window.requestAnimationFrame(function(){
+					container.page.renderCSS(); 
+				}); 
+				/*setTimeout(function(){
+					container.page.renderCSS(); 
+				}, 0); */
 				return this; 
 			},
 			renderBlock: function(model){ 
