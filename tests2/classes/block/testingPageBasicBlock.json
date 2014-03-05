@@ -1,0 +1,14 @@
+{
+  "name": "Testing Page",
+  "page": {
+    "viewProps": {
+      "className": "Page"
+    },
+    "subcollection": [
+    {
+      "viewProps": {
+        "className": "Block"
+      }
+    }]
+  }
+}

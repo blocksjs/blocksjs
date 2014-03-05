@@ -1,0 +1,166 @@
+{
+  "name": "test",
+  "classes": [],
+  "content": {
+    "view": {
+      "x": "0",
+      "y": "0",
+      "z": "0",
+      "autohide": "false",
+      "immutableCSS": "false",
+      "blockClass": "Page"
+    },
+    "subcollection": [
+      {
+        "view": {
+          "x": "635",
+          "y": "231",
+          "z": "0",
+          "autohide": "false",
+          "immutableCSS": "false",
+          "css": {
+            "position": "fixed",
+            "width": "200px",
+            "height": "200px",
+            "max-height": "100%",
+            "max-width": "100%",
+            "text-align": "center",
+            "border": "1px black dotted",
+            "background-color": "rgba(100, 100, 100, .7)",
+            "z-index": "0",
+            "&:hover": {
+              "background-color": "rgba(0,0,20,1)",
+              "color": "white"
+            }
+          },
+          "blockClass": "Block"
+        }
+      },
+      {
+        "view": {
+          "x": "489",
+          "y": "324",
+          "z": "0",
+          "autohide": "false",
+          "immutableCSS": "false",
+          "css": {
+            "position": "fixed",
+            "width": "200px",
+            "height": "200px",
+            "max-height": "100%",
+            "max-width": "100%",
+            "text-align": "center",
+            "border": "1px black dotted",
+            "background-color": "rgba(100, 100, 100, .7)",
+            "z-index": "0",
+            "&:hover": {
+              "background-color": "rgba(0,0,20,1)",
+              "color": "white"
+            }
+          },
+          "blockClass": "Block"
+        }
+      },
+      {
+        "view": {
+          "x": "389",
+          "y": "195",
+          "z": "0",
+          "autohide": "false",
+          "immutableCSS": "false",
+          "css": {
+            "position": "fixed",
+            "width": "200px",
+            "height": "200px",
+            "max-height": "100%",
+            "max-width": "100%",
+            "text-align": "center",
+            "border": "1px black dotted",
+            "background-color": "rgba(100, 100, 100, .7)",
+            "z-index": "0",
+            "&:hover": {
+              "background-color": "rgba(0,0,20,1)",
+              "color": "white"
+            }
+          },
+          "blockClass": "Block"
+        }
+      },
+      {
+        "view": {
+          "x": "461",
+          "y": "39",
+          "z": "0",
+          "autohide": "false",
+          "immutableCSS": "false",
+          "css": {
+            "position": "fixed",
+            "width": "200px",
+            "height": "200px",
+            "max-height": "100%",
+            "max-width": "100%",
+            "text-align": "center",
+            "border": "1px black dotted",
+            "background-color": "rgba(100, 100, 100, .7)",
+            "z-index": "0",
+            "&:hover": {
+              "background-color": "rgba(0,0,20,1)",
+              "color": "white"
+            }
+          },
+          "blockClass": "Block"
+        }
+      },
+      {
+        "view": {
+          "x": "239",
+          "y": "305",
+          "z": "0",
+          "autohide": "false",
+          "immutableCSS": "false",
+          "css": {
+            "position": "fixed",
+            "width": "200px",
+            "height": "200px",
+            "max-height": "100%",
+            "max-width": "100%",
+            "text-align": "center",
+            "border": "1px black dotted",
+            "background-color": "rgba(100, 100, 100, .7)",
+            "z-index": "0",
+            "&:hover": {
+              "background-color": "rgba(0,0,20,1)",
+              "color": "white"
+            }
+          },
+          "blockClass": "Block"
+        }
+      },
+      {
+        "view": {
+          "x": "366",
+          "y": "425",
+          "z": "0",
+          "autohide": "false",
+          "immutableCSS": "false",
+          "css": {
+            "position": "fixed",
+            "width": "200px",
+            "height": "200px",
+            "max-height": "100%",
+            "max-width": "100%",
+            "text-align": "center",
+            "border": "1px black dotted",
+            "background-color": "rgba(100, 100, 100, .7)",
+            "z-index": "0",
+            "&:hover": {
+              "background-color": "rgba(0,0,20,1)",
+              "color": "white"
+            }
+          },
+          "blockClass": "Block"
+        }
+      }
+    ]
+  }
+}
