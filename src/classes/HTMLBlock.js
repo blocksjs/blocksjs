@@ -11,6 +11,28 @@ define(['Block', 'CSS'], function(Block, CSS){
 			'-webkit-transition':'all .5s', 
 			'-moz-transition':'all .5s' 
 		}, 
+		skeleton: { 
+			view: {
+				y: 'settings.blockClass'
+			}, 
+			model: { 
+				x: 'settings.x' 
+			}, 
+			children: {
+				'HTMLB': {
+					model:{
+						x: 'settings.x', 
+						id: 'settings.videoIds.*', 
+						test: 'settings.test.*'
+					}, 
+					view: {
+						x: 'settings.x', 
+						y: 'settings.y', 
+						test2: 'fowejfowjfwo'
+					}
+				}
+			}
+		}, 
 		template: 	_.template('<p>ohheeeey fromt he block</p>'), 
 		initialize: function(options){ 
 			var block = this; 

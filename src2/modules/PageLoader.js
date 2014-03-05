@@ -1,4 +1,4 @@
-define([], function(){
+define(['io','create', 'query'], function(io, create, query){
 	return {
 		//takes the state JSON and creates a page collection  
         loadPage: function( settings, callback ){ 
@@ -22,10 +22,10 @@ define([], function(){
                 if(json.sync) controller._loadPageSync(child.settings.page); 
 
                 //create a reference to all of the classes in the function so we can create objects
-                controller.loadClasses(['Block', 'Container', 'Page'].concat(json.classes || []), function(){
+                io.loadClasses(['Block', 'Container', 'Page'].concat(json.classes || []), function(){
 
                     //create Page block 
-                    controller.createBlock(json.content.view.blockClass || 'Page', json.content || {}, function(page){ 
+                    create.createBlock(json.content.view.blockClass || 'Page', json.content || {}, function(page){ 
 
                         //start page, if async loading is used then render immediately 
                         child.content = page; 
@@ -43,7 +43,7 @@ define([], function(){
         },  
         _loadPageSync: function(json){
             var controller = this,
-                numChildren = controller.getNumBlocks(json.content); 
+                numChildren = query.getNumBlocks(json.content); 
 
             controller.renderState = _.after(numChildren, function(){ 
                 controller.pages[0].view.render(); 

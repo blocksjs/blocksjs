@@ -79,6 +79,7 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
                     parent: parent 
                 })); 
                 blocks._set(ret.view); 
+
                 if(parent.model && parent.model.subcollection) parent.model.subcollection.add(ret.model); 
                 if(parent.subcollection) parent.subcollection.add(ret.view); 
 
@@ -225,22 +226,22 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
                 }
             }); 
         },
-        _remove: function(block){
-            var blockId = block._blockID,
+        _remove: function(block){ 
+            var blockId = block._blockID, 
                 userId = block.get('blockID'), 
                 classes = block.getClassAncestry(); 
 
-            //remove _blockID
+            //remove _blockID 
             block._blockID = blockId; 
             delete blocks._blockIds[blockId]; 
 
-            //set special user id
-            if(userId){
+            //set special user id 
+            if(userId){ 
                 delete blocks._userBlockIds[userId]; 
-            }
+            } 
 
-            //set classes
-            _.each(classes, function(className){
+            //set classes 
+            _.each(classes, function(className){ 
                 var index = _.indexOf(blocks._classList[className], blockId); 
                 blocks._classList[className].splice(index,1); 
             }); 
@@ -258,19 +259,15 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
             return numBlocks; 
         }, 
 
-        //return block with _blockId
-        getBlockById: function(id){
+        //return block with _blockId 
+        getBlockById: function(id){ 
             return this._blockIds[id]; 
         }, 
 
-        //get array of .Panel blocks
-        getBlocksByClassName: function(className){
+        //get array of .Panel blocks 
+        getBlocksByClassName: function(className){ 
             return this._classList[className]; 
-        }, 
-
-        //getBlocksByEnvironmentType: function(){} //get all processing objects, Threejs objects, canvas objects etc...
-
-
+        }
     };  
     return core; 
 }); 

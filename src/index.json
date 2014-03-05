@@ -28,6 +28,8 @@
               "color": "white"
             }
           },
+          "videoIds":["23io", "2o3ifjf", "fjjfow32", "fjow-wf324898"], 
+          "test":["2fiojewiof", "ohheeeeey", "testing123"],
           "blockClass": "HTMLBlock"
         }
       },
@@ -74,7 +76,8 @@
               "color": "white"
             }
           },
-          "blockClass": "HTMLBlock"
+          "blockClass": "HTMLBlock", 
+          "test":["2fiojewiof", "ohheeeeey", "testing123"]
         }
       },
       {
