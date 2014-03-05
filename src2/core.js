@@ -1,4 +1,4 @@
-define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container", "Page"], function($, _, Backbone, less, postal, Block){
+define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container", "Page", "Create", "IO", "Query", "PageLoader"], function($, _, Backbone, less, postal, Block, create, io, query, load){
     'use strict;'
     var core = function(settings, callback){
         //it would be cool to have this as a singleton object like jquery 
@@ -60,7 +60,8 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
             }); 
 
             return this; 
-        }
+        }; 
+        _.extend(core.prototype, create, io, load, query); 
     };  
     return core; 
 }); 
