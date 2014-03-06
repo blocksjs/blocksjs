@@ -1,13 +1,25 @@
-define(["ViewBlock", "BlockCollection", "Create", "Query"], function(Block, BlockCollection, create, query ){ 
+define(["ViewBlock", "BlockCollection", "Create", "Query"], function(ViewBlock, BlockCollection, create, query ){ 
 	var Container = Block.extend({ 
 		blockClass: 'Container', 
-		superClass: 'Block', 
+		superClass: 'ViewBlock', 
 		initialize: function(attributes){ 
-			Block.prototype.initialize.call(this, attributes); 
+			ViewBlock.prototype.initialize.call(this, attributes); 
 			var attrs = attributes || {}; 
 			this.subcollection = this.children = new BlockCollection(attrs.subcollection || []); 
 		}, 
-		createBlock: function(){
+/*		
+
+
+
+
+
+use create module somehow
+
+
+
+
+
+createBlock: function(){
 			create.createBlock.apply(this, arguments); 
 
 		}, 
@@ -20,7 +32,7 @@ define(["ViewBlock", "BlockCollection", "Create", "Query"], function(Block, Bloc
 				if(_.isFunction(callback)) callback(view); 
 			}); 					
 		}, 
-		render: function(){ 	
+*/		render: function(){ 	
 			var container = this; 
 			//render data from the blocks 
 			if( this.model.subcollection ){ 
@@ -44,7 +56,7 @@ define(["ViewBlock", "BlockCollection", "Create", "Query"], function(Block, Bloc
 		}, 
 		toJSON: function(){ 
 			var container = this; 
-			var output = Block.prototype.toJSON.call(this); 
+			var output = ViewBlock.prototype.toJSON.call(this); 
 			//console.log(block.subviews); 
 			if(container.subcollection && container.subcollection.length > 0){ 
 				output.subcollection = []; 
@@ -55,6 +67,15 @@ define(["ViewBlock", "BlockCollection", "Create", "Query"], function(Block, Bloc
 			return output; 
 		}
 	}); 
+
+/*
+
+
+create unit test that makes sure container is actually extended
+
+or just console.log tests
+
+*/
 	_.extend(Container.prototype, create, query); 
 	return Container; 
 }); 

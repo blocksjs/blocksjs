@@ -2,7 +2,7 @@ define(['ViewBlock', 'CSS'], function(ViewBlock, CSS){
 	var HTMLBlock = ViewBlock.extend({ 
 		blockClass: 'HTMLBlock', 
 		superClass: 'ViewBlock', 
-		super: ViewBlock.prototype, 
+		//super: ViewBlock.prototype, 
 		defaultCSS: { 
 			'display':'inline-block', 
 			'width':'100%', 
@@ -11,7 +11,7 @@ define(['ViewBlock', 'CSS'], function(ViewBlock, CSS){
 			'-webkit-transition':'all .5s', 
 			'-moz-transition':'all .5s' 
 		}, 
-		template: 	_.template('<p>ohheeeey fromt he block</p>'), 
+		template: 	_.template('<p>ohheeeey from da <b>HTML</b> block</p>'), 
 		initialize: function(options){ 
 			var block = this; 
 			ViewBlock.prototype.initialize.call(this, options); 
@@ -21,6 +21,11 @@ define(['ViewBlock', 'CSS'], function(ViewBlock, CSS){
 			_.each(this.getClassAncestry(), function(className){ 
 				block.el.classList.add(className); 
 			}); 
+
+			//set id onto the view 
+			var myId = this._blockID; 
+			if(options && options.blockID) myId = myId.concat(' ' + options.blockID); 
+			this.id = this.el.id = myId; 
 
 			//add css object
 			var attrs = (this.attributes.hasOwnProperty('css'))? this.get('css'): {}; 
