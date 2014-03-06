@@ -1,5 +1,6 @@
-define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container", "Page", "Create", "IO", "Query", "PageLoader"], function($, _, Backbone, less, postal, Block, create, io, query, load){
+define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container", "Page", "create", "io", "query", "load"], function($, _, Backbone, less, postal, Block, create, io, query, load){
     'use strict;'
+    alert('oiwhefoiwjefowijfe'); 
     var core = function(settings, callback){
         //it would be cool to have this as a singleton object like jquery 
         //that way you can do blocks('.Panel') and 
@@ -60,8 +61,8 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
             }); 
 
             return this; 
-        }; 
-        _.extend(core.prototype, create, io, load, query); 
+        }
     };  
+    _.extend(core.prototype, create, io, load, query); 
     return core; 
 }); 
