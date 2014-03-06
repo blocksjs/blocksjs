@@ -4,7 +4,7 @@ define(['io'], function(io){
         return new Backbone.Model(settings, options); 
     }; 
 
-    //create view
+    //create view 
     function _createView(model, klass, attrs){ 
         var controller = this, view;
         attrs = attrs || {};  
@@ -21,6 +21,7 @@ define(['io'], function(io){
             skeleton = block.skeleton, 
             ret = {}; 
         if(!skeleton) return; 
+
         //set model and view 
         if(model = skeleton.model)  ret.model = _extractVals(model, settings); 
         if(view = skeleton.view)    ret.view = _extractVals(view, settings); 
@@ -30,46 +31,51 @@ define(['io'], function(io){
     }; 
     function _extractVals(ob, settings){ 
         var obSettings = {}; 
-        //need to find settings and put them on the object before we create the model
+        //need to find settings and put them on the object before we create the model 
         _.each(ob, function(val, key, list){ 
-            var keys = val.split('.'), attrVal, attrKey; 
+            if(_.isString(val)){
+                var keys = val.split('.'), attrVal, attrKey; 
 
-            //allow 'settings.anyAttribute' optionally 
-            if(keys[0] === 'settings' || keys[0] === 'Settings'){
-                keys.shift(); 
+                //allow 'settings.anyAttribute' optionally 
+                if(keys[0] === 'settings' || keys[0] === 'Settings'){
+                    keys.shift(); 
 
-                 //include attributes? 
-                //keys[0] should be the attribute name, i.e 'videoIDs' 
-                attrKey = keys[0]; 
+                     //include attributes? 
+                    //keys[0] should be the attribute name, i.e 'videoIDs' 
+                    attrKey = keys[0]; 
 
-                //if that attribute exists in the hash 
-                if(settings && settings[attrKey]){ 
+                    //if that attribute exists in the hash 
+                    if(settings && settings[attrKey]){ 
 
-                    //allow us to set properties from an array, videoIDs[] for example 
-                    if(keys[1] && _.isArray( settings[attrKey] )){ 
+                        //allow us to set properties from an array, videoIDs[] for example 
+                        if(keys[1] && _.isArray( settings[attrKey] )){ 
 
-                        //if we use 'settings.videoIDs.1' it should correspond to the position in the array 
-                        if(_.isNumber(keys[1])){
-                            attrVal = settings[attrKey][num]; 
+                            //if we use 'settings.videoIDs.1' it should correspond to the position in the array 
+                            if(_.isNumber(keys[1])){
+                                attrVal = settings[attrKey][num]; 
 
-                        //else create a block for everything in the array 
-                        }else if(keys[1] === '*'){ 
-                            attrVal = []; 
-                            _.each(settings[attrKey], function(val, index, list){ 
-                                attrVal.push(val); 
-                            }); 
-                        }
+                            //else create a block for everything in the array 
+                            }else if(keys[1] === '*'){ 
+                                attrVal = []; 
+                                _.each(settings[attrKey], function(val, index, list){ 
+                                    attrVal.push(val); 
+                                }); 
+                            }
 
-                    //else just use the attribute (even if it is an)
-                    }else{
-                        attrVal = settings[attrKey]; 
+                        //else just use the attribute (even if it is an)
+                        }else{
+                            attrVal = settings[attrKey]; 
+                        } 
                     } 
-                } 
 
-            //else just use the provided template
+                //else just use the provided template
+                }else{
+                    attrVal = keys[0]; 
+                }
             }else{
-                attrVal = keys[0]; 
+                attrVal = val; 
             }
+            
 
            
 

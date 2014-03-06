@@ -15,11 +15,15 @@ define(['ViewBlock', 'CSS'], function(ViewBlock, CSS){
 			model: {
 				x: 'settings.x', 
 				background: "settings.background", 
-				text: 'woeifjweoifjewofi' /*************** DOESNT YET SET THESE AUTOMATICALLY
-
-
-
-				*****************************************/////////////
+				text: 'woeifjweoifjewofi'
+			}, 
+			view: {
+				css: {
+					position:'fixed', 
+					background:'green', 
+					'width':'100px', 
+					'height':'100px'
+				}
 			}
 		}, 
 		template: 	function(dat){
