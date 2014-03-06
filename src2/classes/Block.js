@@ -1,4 +1,4 @@
-define(['postal','underscore', 'backbone'], function(Postal, _, Backbone){
+define(['postal','backbone'], function(Postal, Backbone){
 	var Block = function(){ 
 		var block = this; 
 
@@ -18,18 +18,19 @@ define(['postal','underscore', 'backbone'], function(Postal, _, Backbone){
 		var attrs = _.omit(options,['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events', 'parent', 'blockClass']); 
 		block.attributes = _.defaults({}, attrs, _.result(this, 'defaults')); 
 
-		//start off events using ins and outs 
-		/*if(options && options.ins){ 
-			var subscriptions = []; 
-			_.each(options.ins, function(ev){ 
-				var subscription = postal.subscribe(); 
-				subscriptions.push(subscription); 
-			}); 
-		} */ 
-		//set up outs 
-		/*if(options && options.outs){ 
 
-		}*/ 
+
+/*
+
+
+
+	move page stuff down to getpage
+
+
+
+*/
+
+
 
 		//parent page 
 		block.page =(function findPage(child){ 
@@ -41,9 +42,29 @@ define(['postal','underscore', 'backbone'], function(Postal, _, Backbone){
 
 	Block.prototype = { 
 		blockClass: 'Block', 
-		blockID: null, 
-		_ins: {},
-		_outs: {},
+/*
+
+
+
+
+make it so in/out creates an _ins and _outs if it's not created yet
+
+
+
+
+
+
+
+take out view specific code make it more general.
+
+hopefully things will magically work and no debugging is necessary
+
+otherwise, get/set will be a viewblock thing for now
+
+
+
+
+*/
 		get: function(key){
 			var block = this;
 			if(!key){ //if no parameters passed in

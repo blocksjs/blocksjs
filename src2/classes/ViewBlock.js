@@ -1,20 +1,24 @@
-define(['Block'], function(Block, CSS){ 
-	var ViewBlock = _.extend({}, Block.prototype, { 
-		blockClass: 'ViewBlock', 
-		superClass: 'Block', 
-		super: Block.prototype, 
+define(['backbone','Block'], function(Backbone, Block){ 
+	var ViewBlock = _.extend({}, Block.prototype, {
+		blockClass: 'ViewBlock',
+		superClass: 'Block',
+		/*
+
+
+			figure out super properly
+
+
+
+		*/
+		//super: Block.prototype, 
 		initialize: function(options){ 
 			var block = this; 
 			Block.prototype.constructor.call(this, options); 
+		}, 
+		render: function(){
+			return this; 
+		}, //this should actualize the state of the object, NOT deal with creating models
 
-			//set skeleton 
-			this.createSkeleton(options); 
-
-			//set id onto the view 
-			var myId = this._blockID; 
-			if(options && options.blockID) myId = myId.concat(' ' + options.blockID); 
-			this.id = this.el.id = myId; 
-		},
 		toJSON: function(){ 
 			var block = this, 
 				ret = {}; 
@@ -33,7 +37,7 @@ define(['Block'], function(Block, CSS){
 			if(block.model) ret.model = block.model.toJSON();
 			return ret; 
 		}, 
-	}); 
-	HTMLBlock = Backbone.View.extend(HTMLBlock); 
-	return HTMLBlock; 
+
+	});
+	return Backbone.View.extend(ViewBlock); 
 }); 
