@@ -27,7 +27,6 @@ define(["ViewBlock", "BlockCollection", "create", "query"], function(ViewBlock, 
 	   		_.each(this.subviews, function(subview){ 
 	   			(subview.model === model) ? ret = subview : false; 
 	   		}); 
-	   		console.log('RET FROM _VERIFY IN CONTAINER', ret); 
 	   		return ret; 
 		}, 
 		toJSON: function(){ 

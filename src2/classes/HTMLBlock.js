@@ -11,7 +11,21 @@ define(['ViewBlock', 'CSS'], function(ViewBlock, CSS){
 			'-webkit-transition':'all .5s', 
 			'-moz-transition':'all .5s' 
 		}, 
-		template: 	_.template('<p>ohheeeey from da <b>HTML</b> block</p>'), 
+		skeleton: {
+			model: {
+				x: 'settings.x', 
+				background: "settings.background", 
+				text: 'woeifjweoifjewofi' /*************** DOESNT YET SET THESE AUTOMATICALLY
+
+
+
+				*****************************************/////////////
+			}
+		}, 
+		template: 	function(dat){
+			console.log('dattttt', dat.poopsie); 
+			return _.template('<p>ohheeeey from da <b><% print(data.text || "HTML") %></b> block</p>', dat, {variable: 'data'}); 
+		}, 
 		initialize: function(options){ 
 			var block = this; 
 			ViewBlock.prototype.initialize.call(this, options); 
@@ -84,12 +98,9 @@ define(['ViewBlock', 'CSS'], function(ViewBlock, CSS){
 		}, 
 		render: function(){ 
 			//if there is a model, merge it's properties with the defaults
-			var dat = 
-				(this.model)? 
-					_.extend({}, this.toJSON(), this.model.toJSON()): 
-					this.toJSON();
-
-			this.$el.html(this.template(dat)); 
+			var dat = this.toJSON(); 
+			var dummy = _.extend({}, dat.view, dat.model);  
+			this.$el.html(this.template(dummy)); 
 			return this; 
 		}, 
 	}); 
