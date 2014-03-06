@@ -1,8 +1,10 @@
-define(["ViewBlock", "BlockCollection", "Create", "Query"], function(ViewBlock, BlockCollection, create, query ){ 
-	var Container = Block.extend({ 
+define(["ViewBlock", "BlockCollection", "create", "query"], function(ViewBlock, BlockCollection, create, query ){ 
+	var Container = ViewBlock.extend({ 
 		blockClass: 'Container', 
 		superClass: 'ViewBlock', 
+		super: ViewBlock.prototype, 
 		initialize: function(attributes){ 
+			console.log(attributes.parent); 
 			ViewBlock.prototype.initialize.call(this, attributes); 
 			var attrs = attributes || {}; 
 			this.subcollection = this.children = new BlockCollection(attrs.subcollection || []); 
@@ -19,7 +21,7 @@ use create module somehow
 
 
 
-createBlock: function(){
+		createBlock: function(){
 			create.createBlock.apply(this, arguments); 
 
 		}, 

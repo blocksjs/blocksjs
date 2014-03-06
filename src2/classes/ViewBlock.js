@@ -2,6 +2,7 @@ define(['backbone','Block'], function(Backbone, Block){
 	var ViewBlock = _.extend({}, Block.prototype, {
 		blockClass: 'ViewBlock',
 		superClass: 'Block',
+		super: Block.prototype, 
 		/*
 
 
@@ -13,7 +14,7 @@ define(['backbone','Block'], function(Backbone, Block){
 		//super: Block.prototype, 
 		initialize: function(options){ 
 			var block = this; 
-			Block.prototype.constructor.call(this, options); 
+			Block.call(this, options); 
 		}, 
 		render: function(){
 			return this; 
@@ -23,7 +24,7 @@ define(['backbone','Block'], function(Backbone, Block){
 			var block = this, 
 				ret = {}; 
 				ret.view = {}, 
-				targets = _.extend(block.defaults, {css:''}); 
+				targets = _.extend({}, block.defaults, {css:''}); 
 
 			//get defaults for returning 
 			_.each(targets, function(value, key){

@@ -19,13 +19,13 @@ define(['io','create', 'query'], function(io, create, query){
                 var child = {settings: json}; 
 
                 //if user requests a synchronous rendering then it will wait until the page is ready to render
-                if(json.sync) controller._loadPageSync(child.settings.page); 
+                if(json.sync) io._loadPageSync.call(controller, child.settings.page); 
 
                 //create a reference to all of the classes in the function so we can create objects
-                io.loadClasses(['Block', 'Container', 'Page'].concat(json.classes || []), function(){
+                io.loadClasses.call(controller, ['Block', 'Container', 'Page'].concat(json.classes || []), function(){
 
                     //create Page block 
-                    create.createBlock(json.content.view.blockClass || 'Page', json.content || {}, function(page){ 
+                    create.createBlock.call(controller, json.content.view.blockClass || 'Page', json.content || {}, function(page){ 
 
                         //start page, if async loading is used then render immediately 
                         child.content = page; 
@@ -43,7 +43,7 @@ define(['io','create', 'query'], function(io, create, query){
         },  
         _loadPageSync: function(json){
             var controller = this,
-                numChildren = query.getNumBlocks(json.content); 
+                numChildren = query.getNumBlocks.call(controller, json.content); 
 
             controller.renderState = _.after(numChildren, function(){ 
                 controller.pages[0].view.render(); 

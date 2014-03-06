@@ -3,7 +3,7 @@ define(['io'], function(io){
 		//create a block from the options. If no class is specific then Block will be created 
         createBlock: function recurse(){ 
             if(arguments.length === 0) return; 
-            var parent = this, 
+            var block = this, 
                 blocks = window.blocks || {}, 
                 args = Array.prototype.slice.call(arguments), 
                 blockClass = '', json = {}, callback; 
@@ -56,15 +56,15 @@ define(['io'], function(io){
             }
 
             //get that specific class and use it 
-            io.getClass(blockClass, function(klass){ 
+            io.getClass.call(block, blockClass, function(klass){ 
                 //add model and view 
                 var ret   = {}; 
                 ret.model = block._createModel(json.model || {}); 
                 ret.view  = block._createView(ret.model, klass, _.extend({}, json.view, { 
-                    parent: parent 
+                    parent: block 
                 })); 
-                if(parent.model && parent.model.subcollection) parent.model.subcollection.add(ret.model); 
-                if(parent.subcollection) parent.subcollection.add(ret.view); 
+                if(block.model && block.model.subcollection) block.model.subcollection.add(ret.model); 
+                if(block.subcollection) block.subcollection.add(ret.view); 
 
                 //load collection 
                 if(json.subcollection){ 
@@ -102,7 +102,7 @@ define(['io'], function(io){
             //create and return view 
             return new klass(attrs); 
         }, 
-        _createSkeleton: function recurse(settings){ 
+        _createSkeleton: function(settings){ 
             //for each thing in the subcollection, create a model and pass in those settings 
             var block = this, 
                 skeleton = block.skeleton, 

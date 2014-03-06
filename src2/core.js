@@ -1,6 +1,5 @@
-define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container", "Page", "create", "io", "query", "load"], function($, _, Backbone, less, postal, Block, create, io, query, load){
+define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container", "Page", "create", "io", "query", "load"], function($, _, Backbone, less, postal, Block, Container, Page,create, io, query, load){
     'use strict;'
-    alert('oiwhefoiwjefowijfe'); 
     var core = function(settings, callback){
         //it would be cool to have this as a singleton object like jquery 
         //that way you can do blocks('.Panel') and 
@@ -20,7 +19,7 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
         _set: function(block){ 
             var blockId = block._blockID, 
                 userId  = block.get('blockID'), 
-                classes = block.getClassAncestry().concat(block.blockClass); 
+                classes = block.getClassAncestry().concat(block.blockClass);
 
             //set _blockID 
             blocks._blockIds[blockId] = block; 

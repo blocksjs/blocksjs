@@ -1,10 +1,9 @@
-define(['postal','backbone'], function(Postal, Backbone){
-	var Block = function(){ 
+define(['postal','backbone'], function(Postal, Backbone){ 
+	var Block = function(options){ 
 		var block = this; 
-
-		//the following might need to be moved to the end or the beginning or something
-		_.extend(block, Backbone.Events); //extend the block with Backbone events functionality
-		//just in case the below overwrites the above
+		//the following might need to be moved to the end or the beginning or something 
+		_.extend(block, Backbone.Events); //extend the block with Backbone events functionality 
+		//just in case the below overwrites the above 
 
 		//set block specific fields 
 		block._blockID = (options && options._blockID)? 
@@ -12,13 +11,10 @@ define(['postal','backbone'], function(Postal, Backbone){
 			_.uniqueId('_block'); 
 		if(options && options.blockID) block.blockID = options.blockID; 
 		if(options && options.parent) this.parent = options.parent; 
-		blocks._set(this); 
 
 		//extend whitelisted attributes from defaults with user options 
 		var attrs = _.omit(options,['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events', 'parent', 'blockClass']); 
 		block.attributes = _.defaults({}, attrs, _.result(this, 'defaults')); 
-
-
 
 /*
 
@@ -31,17 +27,19 @@ define(['postal','backbone'], function(Postal, Backbone){
 */
 
 
-
+	
 		//parent page 
 		block.page =(function findPage(child){ 
 			return 	(child.parent && child.parent.parent)? findPage(child.parent): 
-					(child.parent !== blocks)? child.parent: 
+					(child.parent && child.parent !== blocks)? child.parent: 
 					child; 
 		})(block); 
+		blocks._set(block); 
 	}; 
 
 	Block.prototype = { 
 		blockClass: 'Block', 
+		superClass: 'Block',
 /*
 
 
@@ -115,8 +113,7 @@ otherwise, get/set will be a viewblock thing for now
 		//when you are deleting a block. put that in here.
 		//if it is completely insubstantial, remove this function.
 		remove: function(){ 
-			if(blocks){
-				blocks._remove(this); 
+			if(blocks) blocks._remove(this); 
 		}, 
 
 		/*
@@ -256,7 +253,7 @@ update this so that it returns block and doesn't ignore that
 				}
 			}
 			return block; //make the function daisy chainable!
-		}
+		}, 
 		//internal function for clearing out a single attribute input
 		_clearIn: function(attribute){
 			var block = this;
