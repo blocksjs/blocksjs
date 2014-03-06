@@ -4,37 +4,11 @@ define(["ViewBlock", "BlockCollection", "create", "query"], function(ViewBlock, 
 		superClass: 'ViewBlock', 
 		super: ViewBlock.prototype, 
 		initialize: function(attributes){ 
-			console.log(attributes.parent); 
 			ViewBlock.prototype.initialize.call(this, attributes); 
 			var attrs = attributes || {}; 
 			this.subcollection = this.children = new BlockCollection(attrs.subcollection || []); 
 		}, 
-/*		
-
-
-
-
-
-use create module somehow
-
-
-
-
-
-		createBlock: function(){
-			create.createBlock.apply(this, arguments); 
-
-		}, 
-		createView: function(model, className, attributes, callback){ 
-			var container = this; 
-			blocks.getClass(className || 'Block', function(klass){ 
-				var view = blocks._createView(model, klass, attributes); 
-				blocks._set(view); //register it with blocks 
-				container.subcollection.add(view); //add to the collection 
-				if(_.isFunction(callback)) callback(view); 
-			}); 					
-		}, 
-*/		render: function(){ 	
+		render: function(){ 	
 			var container = this; 
 			//render data from the blocks 
 			if( this.model.subcollection ){ 

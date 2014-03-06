@@ -17,7 +17,6 @@ define(['Container', 'HTMLBlock'], function(Container, HTMLBlock){
 				var container = this; 
 				HTMLBlock.prototype.initialize.call(container, options); 
 				Container.prototype.initialize.call(container, options); 
-				//console.log(options.model); 
 
 				//list to container events 
 				container.listenTo(container.subcollection, 'add', this.addBlock); 
@@ -54,7 +53,7 @@ define(['Container', 'HTMLBlock'], function(Container, HTMLBlock){
 				}
 
 		   		//create view if it doesn't already exist and append to this
-		   		/*if(!this._verify(model)){ 
+		   		if(!this._verify(model)){ 
 		   			this.createView(model, 'HTMLBlock', {}, function( newView ){
 		   				//add to el 
 			   			block.$el.append(newView.render().el); 
@@ -64,7 +63,7 @@ define(['Container', 'HTMLBlock'], function(Container, HTMLBlock){
 		   			//otherwise just have it render itself 
 		   			block.$el.append(view.render()); 
 			   		return view; 
-		   		} 	*/
+		   		} 	
 			}
 		});	
 	return HTMLContainer; 
