@@ -1,5 +1,5 @@
 require.config({ 
-	baseUrl:'/src/classes', 
+	baseUrl:'/src2/classes', 
 	waitSeconds: 10, 
 	paths : {
 	    text : '../requirePlugins/text', //text plugin
@@ -41,9 +41,29 @@ require.config({
 			location: '../libs', 
 			main: 'postal.when' 
 		}, 
+		{ 
+			name: 'create', 
+			location: '../modules', 
+			main: 'Create' 
+		}, 
+		{ 
+			name: 'io', 
+			location: '../modules', 
+			main: 'IO' 
+		}, 		
+		{ 
+			name: 'query', 
+			location: '../modules', 
+			main: 'Query' 
+		}, 
+		{ 
+			name: 'load', 
+			location: '../modules', 
+			main: 'PageLoader' 
+		}, 
 	]
 }); 
-require(['core', 'json!/src/index.json'], function(core, settings){
+require(['core', 'json!/src2/index.json'], function(core, settings){
 	var blocks = window.blocks = new core(settings, function(){
 		//start module 
 	}); 

@@ -1,9 +1,9 @@
-define(["HTMLContainer"], function(Container){ 
+define(["HTMLContainer"], function(HTMLContainer){ 
 	//Page View 
-	var Page = Container.extend({ 
+	var Page = HTMLContainer.extend({ 
 		blockClass: 'Page', 
 		superClass: 'HTMLContainer',  
-		defaultCSS: _.extend({}, Container.prototype.defaultCSS, { 
+		defaultCSS: _.extend({}, HTMLContainer.prototype.defaultCSS, { 
 			position:'fixed', 
 			width	: '100%', 
 			height	: '100%', 
@@ -15,7 +15,7 @@ define(["HTMLContainer"], function(Container){
 		}), 
 		render: function(){ 
 			//generic render call 
-			Container.prototype.render.call(this); 
+			HTMLContainer.prototype.render.call(this); 
 			$('body').append(this.el); 
 			
 		    //renderCSS 
@@ -43,7 +43,7 @@ define(["HTMLContainer"], function(Container){
 		saveState: function(){
 			var ret = {
 				name: this.name, 
-				content: Container.prototype.toJSON.call(this), 
+				content: HTMLContainer.prototype.toJSON.call(this), 
 				classes: [this.blockClass]
 			}; 
 
