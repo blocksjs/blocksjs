@@ -6,7 +6,7 @@ define(['io'], function(io){
 
     //create view 
     function _createView(model, klass, attrs){ 
-        var controller = this, view;
+        var controller = this, view; 
         attrs = attrs || {};  
 
         //add model  
@@ -20,13 +20,14 @@ define(['io'], function(io){
         var ret = {}; 
         if(!skeleton) return; 
 
-        //set model and view 
+        //set model, view and blockClass
+        if(blockClass = skeleton.blockClass) ret.blockClass = blockClass; 
         if(model = skeleton.model)  ret.model = _extractVals(model, settings); 
         if(view = skeleton.view)    ret.view = _extractVals(view, settings); 
-        if(children = skeleton.children){
+        if(children = (skeleton.children || skeleton.subcollection)){
             ret.subcollection = _extractValsCollection(children, settings); 
             console.log('we got kids!!!', ret); 
-        }
+        } 
         return ret; 
     }; 
     function _extractVals(ob, settings){ 
@@ -36,7 +37,7 @@ define(['io'], function(io){
             if(_.isString(val)){
                 var keys = val.split('.'), attrVal, attrKey; 
 
-                //allow 'settings.anyAttribute' optionally 
+                //allow 'settings.anyAttribute' to get the value from settings at runtime
                 if(keys[0] === 'settings' || keys[0] === 'Settings'){
                     keys.shift(); 
 
@@ -68,7 +69,7 @@ define(['io'], function(io){
                         } 
                     } 
 
-                //else just use the provided template
+                //else just use the provided text
                 }else{
                     attrVal = keys[0]; 
                 }
@@ -76,7 +77,7 @@ define(['io'], function(io){
                 attrVal = val; 
             }
             
-            //set it on th return object
+            //set it on th return object 
             if(attrVal) obSettings[key] = attrVal; 
         }); 
         return obSettings; 
@@ -85,40 +86,72 @@ define(['io'], function(io){
         var block = this; 
         var colSettings = [], models, views; 
 
-        //need to find settings and put them on the object before we create the model 
-        _.each(collection, function(val, key, list){ 
-            var blockClass = key; 
-            var attrVal, modelArr = [], viewArr = []; 
+        //if it is an array do this on all children and return the result (makes it recursive); 
+        if(_.isArray(collection)){ 
+            _.each(collection, function(val){ 
+                console.log('val in the recursive thing', val); 
+                colSettings = colSettings.concat(_extractValsCollection(val, settingsOb)); 
+            }); 
+            return colSettings; 
+        } 
 
-            //get model and view settings 
-            if(!val.settings){ 
-                if(model = val.model) models = _set(_extractVals(model, settingsOb));                  
-                if(view = val.view)   views = _set(_extractVals(view, settingsOb)); 
-                var col = _createCollection(blockClass, models, views); 
-                colSettings = colSettings.concat(col); 
-            }else{ 
+        //first check to see what the outline of the object is...
+
+        //if it is {blockClass: 'name', view: {}, model: {}}
+        if(collection.view && collection.view.blockClass){
+            var ret = _createSkeleton(collection, settingsOb); 
+            colSettings.push(ret);         
+
+        //else if it is {blockClass:'name', settings:{}}
+        }else if(collection.settings){
+            if(!collection.blockClass) return new Error('should specify blockClass'); 
+            var ret = _extractVals(collection.settings, settingsOb); 
+            console.log('ret thing from the other json', ret); 
+            colSettings.push({
+                blockClass: collection.blockClass, 
+                settings: ret
+            });         
+
+        //else if it is the variable number of things {'blockClass':{settings for them}, 'blockClass2':{settings}} etc
+        }else{
+            console.log('the collection inside of the big loop of _extractValsCollection', collection); 
+            //need to find settings and put them on the object before we create the model 
+            _.each(collection, function(val, key, list){ 
+                //if key is a number then it is the index, we should assess the object inside. 
                 var blockClass = key; 
-                var returnArr = _set(_extractVals(val.settings, settingsOb)); 
-                _.each(returnArr, function(setting){ 
-                    var thing = { 
-                        "settings": setting, 
-                        blockClass: blockClass                        
-                    };
-                    var otherThing = {
-                        settings: setting,
-                        blockClass: blockClass
-                    };
+                var attrVal, modelArr = [], viewArr = []; 
 
-                    //SUPER STRANGE BUG!!!!
-                    //IF you check both of these objects in the console they should be the same BUT 
-                    //the object that gets pushed to colSettings actually has a model and view object, which it should not. 
-                    //this happens somewhere asynchronously so it wont show up if you step through each of the functions one by one. 
-                    //it only happens if it all runs at once, but this ultimately breaks the code. 
-                    //WHYYYYYYYYYYYYYYYYYYYYYYYYYY!?!?!?!?!?!?!?!!?!?!?!?!?!?
-                    colSettings.push(otherThing); 
-                });          
-            }            
-        }); 
+                //get model and view settings 
+                if(!val.settings){ 
+                    if(model = val.model) models = _set(_extractVals(model, settingsOb));                  
+                    if(view = val.view)   views = _set(_extractVals(view, settingsOb)); 
+                    var col = _createCollection(blockClass, models, views); 
+                    colSettings = colSettings.concat(col); 
+                }else{ 
+                    var blockClass = val.blockClass || key; 
+                    var returnArr = _set(_extractVals(val.settings, settingsOb)); 
+                    _.each(returnArr, function(setting){ 
+                        var thing = { 
+                            "settings": setting, 
+                            blockClass: blockClass                        
+                        };
+                        var otherThing = {
+                            settings: setting,
+                            blockClass: blockClass
+                        };
+
+                        //SUPER STRANGE BUG!!!!
+                        //IF you check both of these objects in the console they should be the same BUT 
+                        //the object that gets pushed to colSettings actually has a model and view object, which it should not. 
+                        //this happens somewhere asynchronously so it wont show up if you step through each of the functions one by one. 
+                        //it only happens if it all runs at once, but this is strange. 
+                        //WHYYYYYYYYYYYYYYYYYYYYYYYYYY!?!?!?!?!?!?!?!!?!?!?!?!?!?
+                        colSettings.push(otherThing); 
+                    });          
+                }            
+            }); 
+        }
+        
 
         //return the collection of models/views 
         return colSettings;             
@@ -270,7 +303,7 @@ define(['io'], function(io){
                     //console.log('JSON.SETTINGS', json); 
                     var skel = _createSkeleton(klass.prototype.skeleton, json.settings); 
                     _.extend(json, skel); 
-                    console.log('new JSON', json, 'SKELETON', skel); 
+                    //console.log('new JSON', json, 'SKELETON', skel); 
                 }
 
                 ret.model = _createModel(json.model || {}); 
@@ -281,14 +314,14 @@ define(['io'], function(io){
                 if(block.subcollection) block.subcollection.add(ret.view); 
 
                 //load collection 
-                if(json.subcollection){ 
-                    var arr, modarr, viewarr; 
+                if(json.subcollection || json.children){ 
+                    var arr, modarr, viewarr, subcol = (json.subcollection || json.children); 
                     ret.subcollection = arr = []; 
                     modarr = ret.model.subcollection = new Backbone.Collection(); 
                     viewarr = ret.view.subcollection;  
 
                     //get models and views from substates 
-                    _.each(json.subcollection, function(substate){ 
+                    _.each(subcol, function(substate){ 
                         recurse.call(ret.view, substate, function(state){
                             arr.push(state); 
                             modarr.add(state.model); 

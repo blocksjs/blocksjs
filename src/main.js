@@ -1,5 +1,5 @@
 require.config({ 
-	baseUrl:'/src2/classes', 
+	baseUrl:'/src/classes', 
 	waitSeconds: 10, 
 	paths : {
 	    text : '../requirePlugins/text', //text plugin
@@ -63,7 +63,7 @@ require.config({
 		}, 
 	]
 }); 
-require(['core', 'json!/src2/index.json'], function(core, settings){
+require(['core', 'json!/src/index.json'], function(core, settings){
 	var blocks = window.blocks = new core(settings, function(){
 		//start module 
 	}); 

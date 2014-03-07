@@ -1,10 +1,10 @@
-define(['postal','backbone'], function(Postal, Backbone){
+define(['postal','backbone'], function(Postal, Backbone){ 
 	var Block = function(options){ 
 		var block = this; 
 
-		//the following might need to be moved to the end or the beginning or something
-		_.extend(block, Backbone.Events); //extend the block with Backbone events functionality
-		//just in case the below overwrites the above
+		//the following might need to be moved to the end or the beginning or something 
+		_.extend(block, Backbone.Events); //extend the block with Backbone events functionality 
+		//just in case the below overwrites the above 
 
 		//set block specific fields 
 		block._blockID = (options && options._blockID)? 
@@ -35,13 +35,14 @@ define(['postal','backbone'], function(Postal, Backbone){
 
 
 		//parent page 
-/*		block.page =(function findPage(child){ 
+		block.page =(function findPage(child){ 
 			return 	(child.parent && child.parent.parent)? findPage(child.parent): 
 					(child.parent !== blocks)? child.parent: 
 					child; 
 		})(block); 
-*/
-		//blocks._set(block); 
+
+		//tell blocksjs that this exists
+		if(window.blocks) window.blocks._set(block); 
 	}; 
 
 	Block.prototype = { 

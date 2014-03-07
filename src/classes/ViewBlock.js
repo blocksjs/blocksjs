@@ -28,7 +28,7 @@ define(['backbone','Block'], function(Backbone, Block){
 
 			//get defaults for returning 
 			_.each(targets, function(value, key){
-				if(block.attributes.hasOwnProperty(key)) ret.view[key] = block.get(key); 
+				if(block.hasOwnProperty(key)) ret.view[key] = block.get(key); 
 			}); 
 
 			//add blockClass
