@@ -1,8 +1,8 @@
-define(['Block', 'CSS'], function(Block, CSS){ 
-	var HTMLBlock = Block.extend({ 
+define(['ViewBlock', 'CSS'], function(ViewBlock, CSS){ 
+	var HTMLBlock = ViewBlock.extend({ 
 		blockClass: 'HTMLBlock', 
-		superClass: 'Block', 
-		super: Block.prototype, 
+		superClass: 'ViewBlock', 
+		//super: ViewBlock.prototype, 
 		defaultCSS: { 
 			'display':'inline-block', 
 			'width':'100%', 
@@ -11,10 +11,23 @@ define(['Block', 'CSS'], function(Block, CSS){
 			'-webkit-transition':'all .5s', 
 			'-moz-transition':'all .5s' 
 		}, 
-		template: 	_.template('<p>ohheeeey fromt he block</p>'), 
+		skeleton: {
+			model: {
+				background: "settings.background", 
+				text: 'woeifjweoifjewofi'
+			}, 
+			view: {
+				x: 'settings.x', 
+				y: 'settings.y', 
+				css: 'settings.css'
+			}
+		}, 
+		template: 	function(dat){
+			return _.template('<p><b><% print("HTMLBlock") %></b></p>', dat, {variable: 'data'}); 
+		}, 
 		initialize: function(options){ 
 			var block = this; 
-			Block.prototype.initialize.call(this, options); 
+			ViewBlock.prototype.initialize.call(this, options);
 
 			//add css classes based on block classes 
 			this.el.classList.add(this.blockClass); 
@@ -77,14 +90,16 @@ define(['Block', 'CSS'], function(Block, CSS){
 		        rect.right <= (window.innerWidth || document. documentElement.clientWidth)
 		    );
 		},
+		remove: function(){ 
+			Backbone.View.prototype.remove.call(this); 
+			if(blocks) blocks._remove(this); 
+			return this; 
+		}, 
 		render: function(){ 
 			//if there is a model, merge it's properties with the defaults
-			var dat = 
-				(this.model)? 
-					_.extend({}, this.toJSON(), this.model.toJSON()): 
-					this.toJSON();
-
-			this.$el.html(this.template(dat)); 
+			var dat = this.toJSON(); 
+			var dummy = _.extend({}, dat.view, dat.model);  
+			this.$el.html(this.template(dummy)); 
 			return this; 
 		}, 
 	}); 

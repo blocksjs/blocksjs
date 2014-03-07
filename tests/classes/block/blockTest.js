@@ -1,5 +1,5 @@
 require.config({ 
-  baseUrl:'../../../src/classes', 
+  baseUrl:'../../../src2/classes', 
   waitSeconds: 10, 
   paths : {
     text : '../requirePlugins/text', //text plugin
@@ -79,12 +79,12 @@ require.config({
 
   ] 
 }); 
-var requireArray = ['core','Block','TextBlock','Container','Page', 'chai'];
+var requireArray = ['core','postal','Block','TextBlock','Container','Page', 'chai'];
 requireArray.push('json!../../tests/classes/block/testingPageBasicBlock.json');
 requireArray.push('json!../../tests/classes/block/testingPageTextBlock.json');
 requireArray.push('mocha');
 
-require(requireArray, function(Blocks, blockClass, textBlockClass, containerClass, pageClass, chai, basicPageJSON, textPageJSON){ 
+require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, containerClass, pageClass, chai, basicPageJSON, textPageJSON){ 
   var expect = chai.expect; 
   mocha.setup('bdd'); 
 
@@ -315,7 +315,7 @@ require(requireArray, function(Blocks, blockClass, textBlockClass, containerClas
 				// expect(resultsText).to.equal({className:'TextBlock', text:'You should probably fill this with real text :)', type:'p'});
 			});
 		});
-
+/*
 		//initializes the object
 		describe("#initialize()", function(){
 			it("should set attributes if attributes are passed in as a hash", function(){
@@ -334,7 +334,7 @@ require(requireArray, function(Blocks, blockClass, textBlockClass, containerClas
 		describe("#render()", function(){
 
 		});
-
+*/
 		//removes the object and all variable references/event listeners therewithin
 		describe("#remove()", function(){
 			it("should remove all attributes from memory", function(){
@@ -346,18 +346,6 @@ require(requireArray, function(Blocks, blockClass, textBlockClass, containerClas
 			it("should not exist after remove is finished running", function(){
 
 			});
-		});
-
-		//should the next two be in here?
-
-		//convenience function to subscribe block to a channel
-		describe("#subscribe()", function(){
-
-		});
-
-		//convenience function to unsubscribe block from a channel
-		describe("#unsubscribe()", function(){
-
 		});
 
 		//returns an array of ancestors (className) from most recent to Block
@@ -406,6 +394,397 @@ require(requireArray, function(Blocks, blockClass, textBlockClass, containerClas
 				expect(resultsBasic).to.equal(void 0);
 			});
 		});
+
+		//a convenience function to create subscriptions
+		describe("#in(attribute, topic, channel)", function(){
+			blockBasic = new blockClass();
+			blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
+			blockBasic.jeremy = function(data){
+				blockBasic.lin = data;
+			}
+			blockBasic.ins = {
+				magic: true,
+				tragic: true,
+				dragic: true
+			};
+
+			it("should return undefined if attribute isn't passed in", function(){
+				expect(blockBasic.in()).to.equal(void 0);
+			});
+			it("should return undefined if attribute doesn't exist in block", function(){
+				expect(blockBasic.in('shanaynaybadoooo')).to.equal(void 0);
+			});
+			it("should return undefined if topic isn't passed in", function(){
+//NEED TO FIX THIS TOO	
+	//maybe not anymore
+				//may need to change 'blockID' to something else
+				expect(blockBasic.in('magic')).to.equal(void 0);
+			});
+			it("should return false if the attribute is not a white listed variable in block", function(){
+// NEED TO FIX THIS SO THAT IT'S WHITE LISTED
+	//maybe not anymore
+				expect(blockBasic.in('blockClass', 'topic')).to.equal(false);
+			});
+			it("should create a subscription on the topic to change the attribute with incoming data if the attribute is a non-function in block", function(){
+				blockBasic.in('magic', 'topic');
+				Postal.publish({
+					topic: 'topic',
+					data: 'shmata'
+				});
+				//perhaps might need to set timeout here
+				expect(blockBasic.magic).to.equal('shmata');
+			});
+			it("should create a subscription on the topic to call the attribute in block if it is a function in block", function(){
+				blockBasic.in('jeremy', 'topic');
+				Postal.publish({
+					topic:'topic',
+					data: 'linning!'
+				});
+				//perhaps might need to TIMEOUT
+				expect(blockBasic.lin).to.equal('linning!');
+			});
+			it("should do the same as the above two tests, but set a channel as well, if a channel is passed in", function(){
+				blockBasic.in('magic', 'topic', 'STRATEGY');
+				Postal.publish({
+					channel: 'STRATEGY',
+					topic: 'topic',
+					data: 'batata'
+				});
+
+				blockBasic.in('jeremy', 'topic', 'TRIII');
+				Postal.publish({
+					channel: 'TRIII',
+					topic: 'topic',
+					data: 'shmatata'
+				});
+				//perhaps might need to set timeout here
+				expect(blockBasic.magic).to.equal('batata');
+				expect(blockBasic.lin).to.equal('shmatata');
+			});
+			it("should set a new array (keyed with attribute) on the internal _ins object in block if this attribute doesn't have any subscriptions yet", function(){
+				expect(blockBasic._ins.dragic).to.equal(void 0);
+				blockBasic.in('dragic', 'shloof');
+				expect(blockBasic._ins.dragic).length(1);
+			});
+			it("should push a new object onto the array (keyed with attribute) on the internal _ins object in block if this attribute already has subscriptions", function(){
+				expect(blockBasic._ins.tragic).to.equal(void 0);
+				blockBasic.in('tragic','distance');
+				blockBasic.in('tragic','magic');
+				blockBasic.in('tragic', 'aloof.three', 'ofSparta');
+				expect(blockBasic._ins.tragic).length(3);
+			});
+			it("should return the block so that it can be daisy chained with more functions", function(){
+				expect(blockBasic.in('tragic','herro','berro')).to.equal(blockBasic);
+			});
+			//do we want the following? for now not implemented
+			it("should set the attribute passed in as a function on the callback of the subscription IF the attribute is an anonymous function", function(){
+
+			});
+		});
+
+		//a convenience function to create publishers that publish on attribute changes
+		describe("#out(attribute, topic, channel", function(){
+			blockBasic = new blockClass();
+			blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
+			blockBasic.outs = {
+				magic: true,
+				tragic: true,
+				dragic: true
+			};
+			it("should return undefined if attribute isn't passed in", function(){
+				expect(blockBasic.out()).to.equal(void 0);
+			});
+			it("should return undefined if attribute doesn't exist in block", function(){
+				expect(blockBasic.out('jernodmmdm')).to.equal(void 0);
+			});
+			it("should return undefined if topic isn't passed in", function(){
+				expect(blockBasic.out('magic')).to.equal(void 0);
+			});
+			it("should return false if the attribute is not a white listed variable in block", function(){
+				expect(blockBasic.out('blockClass', 'herro')).to.equal(false);
+			});
+			it("should listen to the attribute passed in, publishing any changes on the topic passed in", function(){
+				blockBasic.out('magic','topic');
+				var booltime = false;
+				Postal.subscribe({
+					topic: 'topic',
+					callback: function(data){
+						booltime = data;
+					}
+				});
+				blockBasic.magic = 'triangle';
+				//might need more time
+				expect(booltime).to.equal('triangle');
+			});
+			it("should listen to the attribute passed in, publishing any changes on the topic & channel passed in (if channel also passed)", function(){
+				blockBasic.out('magic','topic','chancy');
+				var booltime = false;
+				Postal.subscribe({
+					channel: 'chancy',
+					topic: 'topic',
+					callback: function(data){
+						booltime = data*2;
+					}
+				});
+				blockBasic.magic = 4;
+				//might need more time
+				expect(booltime).to.equal(8);
+			});
+			it("should set a new array (keyed with attribute) on the internal _outs object in block if this attribute doesn't have any subscriptions yet (with the callback for listenTo)", function(){
+				expect(blockBasic._outs.dragic).to.equal(void 0);
+				blockBasic.out('dragic', 'shloof');
+				expect(blockBasic._outs.dragic).length(1);
+			});
+			it("should push a new callback for listenTo onto the array (keyed with attribute) on the internal _outs object in block if this attribute already has subscriptions", function(){
+				expect(blockBasic._outs.tragic).to.equal(void 0);
+				blockBasic.out('tragic', 'shloof');
+				blockBasic.out('tragic', 'droof', 'gjagag');
+				blockBasic.out('tragic', 'gjgjgjs', 'sleep');
+				expect(blockBasic._outs.tragic).length(3);
+			});			
+			it("should return the block so that it can be daisy chained with more functions", function(){
+				expect(blockBasic.out('tragic','herro','berro')).to.equal(blockBasic);
+			});
+		});
+
+		//a convenience function to clear all subscriptions on an attribute
+		describe("#clearIns(attribute)", function(){
+			blockBasic = new blockClass();
+			blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
+			blockBasic.ins = {
+				magic: true,
+				tragic: true,
+				dragic: true
+			};
+			blockBasic.in('magic','tragic');
+			blockBasic.in('tragic', 'topic', 'channel');
+
+			it("should return undefined if attribute is passed in and it doesn't exist in block", function(){
+				expect(blockBasic.clearIns('stagbb')).to.equal(void 0);
+			});
+			it("should do nothing if a valid attribute is passed in that hasn't had any subscriptions created for it", function(){
+				var savedState = blockBasic._ins.toString();
+				blockBasic.clearIns('dragic');
+				expect(blockBasic._ins.toString()).to.equal(savedState);
+			});
+			it("should unsubscribe from all the subscriptions in _ins if a valid attribute is passed in for which subscriptions exist", function(){
+				blockBasic.in('magic', 'topic');
+				blockBasic.in('magic', 'otherTopic', 'channel');
+				blockBasic.clearIns('magic');
+				Postal.publish({
+					topic: 'topic',
+					data: 'seventy'
+				});
+				Postal.publish({
+					channel: 'channel',
+					topic: 'otherTopic',
+					data: 'seventy'
+				});
+				expect(blockBasic.magic).to.not.equal('seventy');
+			});
+			it("should delete the array for the attribute passed if an array previously existed within _ins", function(){
+				blockBasic.in('magic', 'topic');
+				blockBasic.in('magic', 'otherTopic', 'channel');
+				blockBasic.clearIns('magic');
+				expect(blockBasic._ins).to.be.empty;
+			});
+			it("should unsubscribe from all subscriptions in _ins if no attributes passed in", function(){
+				blockBasic.in('magic', 'topic');
+				blockBasic.in('magic', 'otherTopic', 'channel');
+				blockBasic.in('dragic', 'topic');
+				blockBasic.in('dragic', 'otherTopic', 'channel');
+				blockBasic.in('tragic', 'topic');
+				blockBasic.in('tragic', 'otherTopic', 'channel');
+				blockBasic.clearIns();
+				Postal.publish({
+					topic: 'topic',
+					data: 'seventy'
+				});
+				Postal.publish({
+					channel: 'channel',
+					topic: 'otherTopic',
+					data: 'seventy'
+				});
+				expect(blockBasic.magic).to.not.equal('seventy');				
+				expect(blockBasic.tragic).to.not.equal('seventy');				
+				expect(blockBasic.dragic).to.not.equal('seventy');				
+			});
+			it("should have an empty object for _ins after after clearIns is called without an attribute", function(){
+				blockBasic.in('magic', 'topic');
+				blockBasic.in('magic', 'otherTopic', 'channel');
+				blockBasic.in('dragic', 'topic');
+				blockBasic.in('dragic', 'otherTopic', 'channel');
+				blockBasic.in('tragic', 'topic');
+				blockBasic.in('tragic', 'otherTopic', 'channel');
+				blockBasic.clearIns();
+				expect(blockBasic._ins).to.be.empty;				
+			});
+			it("should return the block so that DAISY CHAINING!!!", function(){
+				expect(blockBasic.clearIns()).to.equal(blockBasic);
+			});
+		})
+
+		//a convenience function to clear all listeners on an attribute that publish a message
+		describe("#clearOuts(attribute)", function(){
+			blockBasic = new blockClass();
+			blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
+			blockBasic.outs = {
+				magic: true,
+				tragic: true,
+				dragic: true
+			};
+			blockBasic.out('magic','tragic');
+			blockBasic.out('tragic', 'topic', 'channel');
+
+			it("should return undefined if attribute is passed in and it doesn't exist in block", function(){
+				expect(blockBasic.clearOuts('JDJDJDJ')).to.equal(void 0);
+			});
+			it("should do nothing if a valid attribute is passed in that hasn't had any listener/publishers created for it", function(){
+				var savedState = blockBasic._outs.toString();
+				blockBasic.clearOuts('dragic');
+				expect(blockBasic._outs.toString()).to.equal(savedState);
+			});
+			it("should stop listening to all listeners using callbacks for an attribute in _outs if a valid attribute is passed in for which listeners exist", function(){
+				blockBasic.out('tragic', 'topic');
+				blockBasic.out('tragic', 'shmopic','hello');
+				var shmoop = 'doop';
+				Postal.subscribe({
+					topic: 'topic',
+					callback: function(data){
+						shmoop = data;
+					}
+				});
+				Postal.subscribe({
+					channel: 'hello',
+					topic: 'shmopic',
+					callback: function(data){
+						shmoop = data;
+					}
+				});
+				blockBasic.clearOuts('tragic');
+				blockBasic.tragic = 'face';
+				expect(shmoop).to.equal('doop');
+			});
+			it("should delete the array for the attribute passed if an array previously existed within _outs", function(){
+				blockBasic.out('tragic', 'topic');
+				blockBasic.out('tragic', 'shmopic','hello');
+				blockBasic.clearOuts('tragic');
+				expect(blockBasic._outs.tragic).to.equal(void 0);
+			});
+			it("should stop listening to all listeners in _outs if no attributes passed in", function(){
+				blockBasic.out('tragic', 'topic');
+				blockBasic.out('tragic', 'shmopic','hello');
+				blockBasic.out('magic', 'topic');
+				blockBasic.out('magic', 'shmopic','hello');
+				blockBasic.out('dragic', 'topic');
+				blockBasic.out('dragic', 'shmopic','hello');
+				var shmoop = 'doop';
+				Postal.subscribe({
+					topic: 'topic',
+					callback: function(data){
+						shmoop = data;
+					}
+				});
+				Postal.subscribe({
+					channel: 'hello',
+					topic: 'shmopic',
+					callback: function(data){
+						shmoop = data;
+					}
+				});
+				blockBasic.clearOuts();
+				blockBasic.tragic = 'face';
+				expect(shmoop).to.equal('doop');
+			});
+			it("should have an empty object for _outs after after clearOuts is called without an attribute", function(){
+				blockBasic.out('tragic', 'topic');
+				blockBasic.out('tragic', 'shmopic','hello');
+				blockBasic.out('magic', 'topic');
+				blockBasic.out('magic', 'shmopic','hello');
+				blockBasic.out('dragic', 'topic');
+				blockBasic.out('dragic', 'shmopic','hello');
+				blockBasic.clearOuts();
+				expect(blockBasic._outs).to.be.empty;
+			});
+			it("should return the block so that DAISY CHAINING!!!", function(){
+				expect(blockBasic.clearOuts()).to.equal(blockBasic);
+			});
+		});
+
+		//internal clear for singular attribute in
+		describe("#_clearIn(attribute)", function(){
+			blockBasic = new blockClass();
+			blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
+			blockBasic.ins = {
+				magic: true,
+				tragic: true,
+				dragic: true
+			};
+			blockBasic.in('magic','tragic');
+			blockBasic.in('tragic', 'topic', 'channel');
+
+			it("should unsubscribe from all the subscriptions in _ins for attribute", function(){
+				blockBasic.in('magic','tragic','hello');
+				blockBasic.magic = 'KROKODOLO';
+				blockBasic._clearIn('magic');
+				Postal.publish({
+					channel: 'hello',
+					topic: 'tragic',
+					data: 'shmata'
+				});
+				Postal.publish({
+					topic: 'tragic',
+					data: 'shmata'
+				});
+				expect(blockBasic.magic).to.equal('KROKODOLO');
+			});
+			it("should delete the array for the attribute passed in in _ins", function(){
+				blockBasic.in('tragic','tragic');
+				blockBasic._clearIn('tragic');
+				expect(blockBasic._ins.tragic).to.equal(void 0);
+			});
+		});
+
+		//internal clear for singular attribute out
+		describe("#_clearOut(attribute)", function(){
+			blockBasic = new blockClass();
+			blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
+			blockBasic.outs = {
+				magic: true,
+				tragic: true,
+				dragic: true
+			};
+			blockBasic.out('magic','tragic');
+			blockBasic.out('tragic', 'topic', 'channel');
+
+			it("should stop listening to all listeners using callbacks for the attribute in _outs", function(){
+				blockBasic.out('magic','tragic','hello');
+				var beats = 'beats';
+
+				Postal.subscribe({
+					topic: 'tragic',
+					callback: function(data){
+						beats = data;
+					}
+				});
+				Postal.subscribe({
+					channel: 'hello',
+					topic: 'tragic',
+					callback: function(data){
+						beats = data;
+					}
+				});
+				blockBasic._clearOut('magic');
+				blockBasic.magic = 'squareface';
+				expect(beats).to.equal('beats');
+			});
+			it("should delete the array for the attribute passed in in _outs", function(){
+				blockBasic.out('tragic','tragic');
+				blockBasic._clearOut('tragic');
+				expect(blockBasic._outs.tragic).to.equal(void 0);
+			});
+		});
+
 
 		/// still need checks for: 
 		/*

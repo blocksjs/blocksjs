@@ -1,25 +1,12 @@
-define(["Block", "BlockCollection"], function(Block, BlockCollection){ 
-	var Container = Block.extend({ 
+define(["ViewBlock", "BlockCollection", "create", "query"], function(ViewBlock, BlockCollection, create, query ){ 
+	var Container = ViewBlock.extend({ 
 		blockClass: 'Container', 
-		superClass: 'Block', 
+		superClass: 'ViewBlock', 
+		super: ViewBlock.prototype, 
 		initialize: function(attributes){ 
-			Block.prototype.initialize.call(this, attributes); 
+			ViewBlock.prototype.initialize.call(this, attributes); 
 			var attrs = attributes || {}; 
 			this.subcollection = this.children = new BlockCollection(attrs.subcollection || []); 
-		}, 
-		createBlock: function(){ 
-			var args = Array.prototype.slice.call(arguments); 
-			blocks.createBlock.apply(this, args); 
-			return this; 
-		}, 
-		createView: function(model, className, attributes, callback){ 
-			var container = this; 
-			blocks.getClass(className || 'Block', function(klass){ 
-				var view = blocks._createView(model, klass, attributes); 
-				blocks._set(view); //register it with blocks 
-				container.subcollection.add(view); //add to the collection 
-				if(_.isFunction(callback)) callback(view); 
-			}); 					
 		}, 
 		render: function(){ 	
 			var container = this; 
@@ -40,21 +27,30 @@ define(["Block", "BlockCollection"], function(Block, BlockCollection){
 	   		_.each(this.subviews, function(subview){ 
 	   			(subview.model === model) ? ret = subview : false; 
 	   		}); 
-	   		console.log('RET FROM _VERIFY IN CONTAINER', ret); 
 	   		return ret; 
 		}, 
 		toJSON: function(){ 
 			var container = this; 
-			var output = Block.prototype.toJSON.call(this); 
-			//console.log(block.subviews);
-			if(container.subcollection && container.subcollection.length > 0){
+			var output = ViewBlock.prototype.toJSON.call(this); 
+			//console.log(block.subviews); 
+			if(container.subcollection && container.subcollection.length > 0){ 
 				output.subcollection = []; 
-				container.subcollection.each(function(block){
-					output.subcollection.push(block.toJSON());
+				container.subcollection.each(function(block){ 
+					output.subcollection.push(block.toJSON()); 
 				}); 
 			} 
 			return output; 
-		}, 
+		}
 	}); 
+
+/*
+
+
+create unit test that makes sure container is actually extended
+
+or just console.log tests
+
+*/
+	_.extend(Container.prototype, create, query); 
 	return Container; 
 }); 

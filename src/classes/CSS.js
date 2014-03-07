@@ -26,9 +26,9 @@ define(['require','jquery', 'underscore', 'backbone'], function(require, $, _, B
 				var ret, parent, x, y, z, rotX, rotY, rotZ, scaleX, scaleY, scaleZ, skewX, skewY; 
 				ret = '',
 				parent = this.parent, 
-				x 	   = parent.get('x'), 
-				y 	   = parent.get('y'), 
-				z 	   = parent.get('z'), 
+				x 	   = parent.get('x') || 0, 
+				y 	   = parent.get('y') || 0, 
+				z 	   = parent.get('z') || 0, 
 				rotX   = parent.get('rotateX'), 
 				rotY   = parent.get('rotateY'), 
 				rotZ   = parent.get('rotateZ'), 

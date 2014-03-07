@@ -1,37 +1,68 @@
-define(['backbone'], function(Backbone){ 
-	var Block = Backbone.View.extend({ 
+define(['postal','backbone'], function(Postal, Backbone){ 
+	var Block = function(options){ 
+		var block = this; 
+		//the following might need to be moved to the end or the beginning or something 
+		_.extend(block, Backbone.Events); //extend the block with Backbone events functionality 
+		//just in case the below overwrites the above 
+
+		//set block specific fields 
+		block._blockID = (options && options._blockID)? 
+			options._blockID: 
+			_.uniqueId('_block'); 
+		if(options && options.blockID) block.blockID = options.blockID; 
+		if(options && options.parent) this.parent = options.parent; 
+
+		//extend whitelisted attributes from defaults with user options 
+		var attrs = _.omit(options,['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events', 'parent', 'blockClass']); 
+		block.attributes = _.defaults({}, attrs, _.result(this, 'defaults')); 
+
+/*
+
+
+
+	move page stuff down to getpage
+
+
+
+*/
+
+
+	
+		//parent page 
+		block.page =(function findPage(child){ 
+			return 	(child.parent && child.parent.parent)? findPage(child.parent): 
+					(child.parent && child.parent !== blocks)? child.parent: 
+					child; 
+		})(block); 
+		blocks._set(block); 
+	}; 
+
+	Block.prototype = { 
 		blockClass: 'Block', 
-		superClass: 'Backbone.View', 
-		blockID: null, 
-		defaults: {}, //this should be properties that 
-		attributes: {}, //these are attributes that can be altered with get/set calls 
-		initialize: function(options){ 
-			var block = this; 
-
-			//set block specific fields
-			if(options && options._blockID) block._blockID = options._blockID; 
-			if(options && options.blockID) block.blockID = options.blockID; 
-			if(options && options.parent) this.parent = options.parent; 
-
-			//extend whitelisted attributes from defaults with user options
-			var attrs = _.omit(options,['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events', 'parent', 'blockClass']); 
-			block.attributes = _.defaults({}, attrs, _.result(this, 'defaults')); 
+		superClass: 'Block',
+/*
 
 
-			//start off events
-			var channel = postal.channel(); 
-			var subscription = channel.subscribe('pageRender', function(){
-				console.log('MEEEEE', block); 
-			}); 
-			block.subscriptions = [subscription]; 
 
-			//parent page 
-			this.page = (function findPage(child){ 
-				return 	(child.parent && child.parent.parent)? findPage(child.parent): 
-						(child.parent !== blocks)? child.parent: 
-						child; 
-			})(this); 
-		}, 
+
+make it so in/out creates an _ins and _outs if it's not created yet
+
+
+
+
+
+
+
+take out view specific code make it more general.
+
+hopefully things will magically work and no debugging is necessary
+
+otherwise, get/set will be a viewblock thing for now
+
+
+
+
+*/
 		get: function(key){
 			var block = this;
 			if(!key){ //if no parameters passed in
@@ -69,14 +100,45 @@ define(['backbone'], function(Backbone){
 				return block;
 			}
 		},
-		remove: function(){
-			Backbone.View.prototype.remove.call(this); 
-			blocks._remove(this); 
-			return this; 
+		//function to return reference to Page if block is part of Page
+		getPage: function(){
+			//must add search functionality to ensure page is still valid
+			if(this.page)
+				return this.page;
+			else
+				return void 0;
+		},
+
+		// figure out everything that needs to be removed from the block ecosystem
+		//when you are deleting a block. put that in here.
+		//if it is completely insubstantial, remove this function.
+		remove: function(){ 
+			if(blocks) blocks._remove(this); 
 		}, 
-		subscribe: function(){}, 
-		unsubscribe: function(){}, 
-		saveState: function(){
+
+		/*
+
+
+
+
+
+
+		this needs to be updated to be block general
+		and not model/view specific
+
+
+
+		if the class is block & it has a skeleton, then it is anonymous
+		so that should be saved
+
+		settings should be saved
+
+		IO settings should be saved
+
+
+
+		*/
+		saveState: function(){ 
 			var state, arr; 
 			state = {}; 
 
@@ -86,24 +148,14 @@ define(['backbone'], function(Backbone){
 
 			return state; 
 		}, 
-		toJSON: function(){ 
-			var block = this, 
-				ret = {}; 
-				ret.view = {}, 
-				targets = _.extend(block.defaults, {css:''}); 
+		/*
 
-			//get defaults for returning 
-			_.each(targets, function(value, key){
-				if(block.attributes.hasOwnProperty(key)) ret.view[key] = block.get(key); 
-			}); 
 
-			//add blockClass
-			ret.view.blockClass = block.blockClass;
-			if(block.blockID) ret.view.blockID = block.blockID;
-			
-			if(block.model) ret.model = block.model.toJSON();
-			return ret; 
-		}, 
+update this so that it returns block and doesn't ignore that
+
+
+
+		*/
 		getClassAncestry: function(){
 			var block = this;
 			if(block.blockClass === 'Block')
@@ -116,9 +168,114 @@ define(['backbone'], function(Backbone){
 				return ancestry;
 			}
 		},
-		render: function(){
-			return this; 
-		} //this should actualize the state of the object, NOT deal with creating models
-	}); 
+		//function to set an input stream through Postal on the block
+		in: function(attribute, topic, channel){
+			var block = this;
+			if(!attribute || !(block[attribute]) || !topic){
+				return void 0;
+			}
+			var subscription = {
+				topic: topic
+			};
+			if(channel)
+				subscription.channel = channel;
+
+			if(_.isFunction(block[attribute])){
+				subscription.callback = block[attribute];
+			} else {
+				subscription.callback = function(data){
+					block[attribute] = data;
+				}
+			}
+			var postalSubscription = Postal.subscribe(subscription); //save the postal subscription
+			if(block._ins[attribute]){ //if attribute is set already in ins
+				block._ins[attribute].push(postalSubscription)
+			} else { // otherwise, create new array
+				block._ins[attribute] = [postalSubscription];
+			}
+			return block; //make the function daisy chainable!
+		},
+		//function to set an output stream through Postal on the block
+		//this needs to be rethought too to allow for more
+		// than one channel/topic exit for each attribute
+		//difficult to have multiple routes like this methinks
+		out: function(attribute, topic, channel){
+			var block = this;
+			if(!attribute || !(block[attribute]) || !topic){
+				return void 0;
+			}
+			if(block._outs[attribute]){ //if attribute is set already in outs
+				block._outs[attribute].push(function(){
+					Postal.publish({
+						channel: channel,
+						topic: topic,
+						data: block[attribute]
+					})
+				});
+			} else { //otherwise start the array
+				block._outs = [function(){
+					Postal.publish({
+						channel: channel,
+						topic: topic,
+						data: block[attribute]
+					})}];
+			}
+			block.listenTo(block[attribute], 'change', block._outs[block._outs.length-1]);
+			return block; //make the function daisy chainable!
+		},
+		//clears out Postal subscriptions on an attribute
+		clearIns: function(attribute){
+			var block = this;
+			if(attribute && !(block[attribute]))
+				return void 0;
+			if(attribute) //if attribute passed in
+				block._clearIn(attribute);
+			else{ //if no attribute, AKA remove everything
+				for(var att in block._ins){
+					block._clearIn(att);
+				}
+			}
+			return block; //make the function daisy chainable!
+		},
+		//clears out event listeners 
+		//this one needs to be rethought
+		//since it currently can accidentally remove listeners
+		//that were set up elsewhere (not in the out function)
+		clearOuts: function(attribute){
+			var block = this;
+			if(attribute && !(block[attribute]))
+				return void 0;
+			if(attribute) //if attribute passed in
+				block._clearOut(attribute);
+			else{ //if no attribute, AKA remove everything
+				for(var att in block._outs){
+					block._clearOut(att);
+				}
+			}
+			return block; //make the function daisy chainable!
+		}, 
+		//internal function for clearing out a single attribute input
+		_clearIn: function(attribute){
+			var block = this;
+			if(block._ins[attribute]){
+				//unsubscribe from each subscription
+				for(var i = 0; i < block._ins[attribute].length; i++){
+					block._ins[attribute][i].unsubscribe();
+				}
+				delete block._ins[attribute]; //delete entire object from memory
+			}
+		},
+		//internal function for clearing out a single attribute output
+		_clearOut: function(attribute){
+			var block = this;
+			if(block._outs[attribute]){
+				//stop listening to each listener
+				for(var i = 0; i < block._outs[attribute].length; i++){
+					block.stopListening(block[attribute], 'change', block._outs[attribute][i]);
+				}
+				delete block._outs[attribute]; //delete entire object from memory
+			}
+		}
+	}; 
 	return Block; 
-}); 
+});

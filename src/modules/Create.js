@@ -15,18 +15,18 @@ define(['io'], function(io){
         //create and return view 
         return new klass(attrs); 
     }; 
-    function _createSkeleton(settings){ 
+    function _createSkeleton(skeleton, settings){ 
         //for each thing in the subcollection, create a model and pass in those settings 
-        var block = this, 
-            skeleton = block.skeleton, 
-            ret = {}; 
+        var ret = {}; 
         if(!skeleton) return; 
 
         //set model and view 
         if(model = skeleton.model)  ret.model = _extractVals(model, settings); 
         if(view = skeleton.view)    ret.view = _extractVals(view, settings); 
-        if(children = skeleton.children)
+        if(children = skeleton.children){
             ret.subcollection = _extractValsCollection(children, settings); 
+            console.log('we got kids!!!', ret); 
+        }
         return ret; 
     }; 
     function _extractVals(ob, settings){ 
@@ -76,17 +76,12 @@ define(['io'], function(io){
                 attrVal = val; 
             }
             
-
-           
-
             //set it on th return object
-            if(attrVal) 
-                obSettings[key] = attrVal; 
+            if(attrVal) obSettings[key] = attrVal; 
         }); 
         return obSettings; 
     }; 
-    function _extractValsCollection(collection, settings){ 
-
+    function _extractValsCollection(collection, settingsOb){ 
         var block = this; 
         var colSettings = [], models, views; 
 
@@ -96,15 +91,32 @@ define(['io'], function(io){
             var attrVal, modelArr = [], viewArr = []; 
 
             //get model and view settings 
-            if(!val.settings){
-                if(model = val.model) models = _set(block._extractVals(model, settings));                  
-                if(view = val.view)   views = _set(block._extractVals(view, settings)); 
-                colSettings = colSettings.concat(_createCollection(blockClass, models, views)); 
-            }else{
-                colSettings.push({
-                    blockClass: blockClass,
-                    settings: val.settings
-                }); 
+            if(!val.settings){ 
+                if(model = val.model) models = _set(_extractVals(model, settingsOb));                  
+                if(view = val.view)   views = _set(_extractVals(view, settingsOb)); 
+                var col = _createCollection(blockClass, models, views); 
+                colSettings = colSettings.concat(col); 
+            }else{ 
+                var blockClass = key; 
+                var returnArr = _set(_extractVals(val.settings, settingsOb)); 
+                _.each(returnArr, function(setting){ 
+                    var thing = { 
+                        "settings": setting, 
+                        blockClass: blockClass                        
+                    };
+                    var otherThing = {
+                        settings: setting,
+                        blockClass: blockClass
+                    };
+
+                    //SUPER STRANGE BUG!!!!
+                    //IF you check both of these objects in the console they should be the same BUT 
+                    //the object that gets pushed to colSettings actually has a model and view object, which it should not. 
+                    //this happens somewhere asynchronously so it wont show up if you step through each of the functions one by one. 
+                    //it only happens if it all runs at once, but this ultimately breaks the code. 
+                    //WHYYYYYYYYYYYYYYYYYYYYYYYYYY!?!?!?!?!?!?!?!!?!?!?!?!?!?
+                    colSettings.push(otherThing); 
+                });          
             }            
         }); 
 
@@ -170,6 +182,27 @@ define(['io'], function(io){
         }); 
         return ret; 
     }
+    /*function _createSettingsCollection(blockClass, settings){
+        var ret = [], 
+            models = models || [], 
+            views = views || [], 
+            len = (models.length > views.length)? models.length: views.length; 
+
+        //pair them x times where x is the maximum length
+        _.times(len, function(index){ 
+            var ob = {}; 
+            ob.blockClass = blockClass; 
+
+            //set model and view
+            if(model = models[index])   ob.model = model; 
+            else if(model = models[0]) ob.model = model; //repeat model[0] if necessary to complete the array 
+
+            if(view = views[index])   ob.view = view; 
+            else if(view = views[0]) ob.view = view; 
+            ret.push(ob); 
+        }); 
+        return ret; 
+    }*/
 
     //MODULE DEFINITION 
 	return { 
@@ -181,7 +214,7 @@ define(['io'], function(io){
                 args = Array.prototype.slice.call(arguments), 
                 blockClass = '', json = {}, callback; 
 
-            //check that the first arg is a name, if not then it should just be the settings json
+            //check that the first arg is a name, if not then it should just be the settings json 
             if(_.isString(args[0])){ 
                 //first argument is name 
                 blockClass = args[0]; 
@@ -191,55 +224,55 @@ define(['io'], function(io){
                     json = args[1]: 
                     callback = args[1]; 
 
-                //(name, json, callback)
+                //(name, json, callback) 
                 if(_.isFunction(args[2])) callback = args[2]; 
 
-            //options object or json
-            }else if(_.isObject(args[0])){
+            //options object or json 
+            }else if(_.isObject(args[0])){ 
 
-                //(json, callback)
-                if(_.isFunction(args[1])){
+                //(json, callback) 
+                if(_.isFunction(args[1])){ 
 
-                    //if the json has a view.blockClass property, else Block
-                    blockClass = (args[0].view && args[0].view.blockClass)?
-                                args[0].view.blockClass: 
-                                'Block'; 
+                    //if the json has blockClass, view.blockClass property, else Block 
+                    blockClass =(args[0].blockClass)?                      args[0].blockClass: 
+                                (args[0].view && args[0].view.blockClass)? args[0].view.blockClass: 
+                                                                            'Block'; 
 
                     json = args[0]; 
                     callback = args[1]; 
                 }
                 //({options})
                 else{ 
-
                     //name is...
                     blockClass = 
 
-                        //either the blockClass property
+                        //either the blockClass property 
                         (args[0].blockClass)? args[0].blockClass: 
 
-                        //or view.blockClass property
+                        //or view.blockClass property 
                         (args[0].view && args[0].view.blockClass)?   args[0].view.blockClass: 
 
-                        //or Block by default
+                        //or Block by default 
                         'Block'; 
                         
                     json = args[0].settings || args[0]; 
                     callback = args[0].callback || null; 
-                }
-            }
-
-            //SKELETON!!!!!
-            if(json.settings){
-                console.log('old json'); 
-                var skel = _createSkeleton.call(block, json.settings); 
-                _.extend(json, skel); 
-                console.log('new json', json); 
-            }
+                } 
+            } 
 
             //get that specific class and use it 
             io.getClass.call(block, blockClass, function(klass){ 
                 //add model and view 
                 var ret   = {}; 
+
+                //SKELETON!!!!!
+                if(json.settings){ 
+                    //console.log('JSON.SETTINGS', json); 
+                    var skel = _createSkeleton(klass.prototype.skeleton, json.settings); 
+                    _.extend(json, skel); 
+                    console.log('new JSON', json, 'SKELETON', skel); 
+                }
+
                 ret.model = _createModel(json.model || {}); 
                 ret.view  = _createView(ret.model, klass, _.extend({}, json.view, { 
                     parent: block 

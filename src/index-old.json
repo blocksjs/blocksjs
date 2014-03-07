@@ -9,13 +9,26 @@
     },
     "subcollection": [
       {
-        "blockClass":"HTMLBlock", 
-        "settings":{
-          "x":5, 
-          "background":"green"
-        }, 
-        "view":{
-          "blockClass":"HTMLBlock"
+        "view": {
+          "x": "220",
+          "y": "609",
+          "z": "0",
+          "css": {
+            "position": "fixed",
+            "width": "200px",
+            "height": "200px",
+            "max-height": "100%",
+            "max-width": "100%",
+            "text-align": "center",
+            "border": "1px black dotted",
+            "background-color": "rgba(100, 100, 100, .7)",
+            "z-index": "0",
+            "&:hover": {
+              "background-color": "rgba(0,0,20,1)",
+              "color": "white"
+            }
+          },
+          "blockClass": "HTMLBlock"
         }
       },
       {
