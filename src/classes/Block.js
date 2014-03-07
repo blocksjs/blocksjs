@@ -32,7 +32,7 @@ define(['postal','backbone'], function(Postal, Backbone){
 
 */
 
-		//blocks._set(block); 
+		blocks._set(block); 
 	}; 
 
 	Block.prototype = { 
@@ -64,7 +64,7 @@ otherwise, get/set will be a viewblock thing for now
 
 			//look through options to see if anything is already set in block
 			_.each(options, function(value, key){
-				console.log('current Key: ',key);
+				//console.log('current Key: ',key);
 				if(key == '_blockID'){
 /*					console.log('defaults:  ', defaults);
 					console.log('block has:  ',_.has(block,key));

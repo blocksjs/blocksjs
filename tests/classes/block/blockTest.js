@@ -98,12 +98,12 @@ require.config({
 	}, 
   ] 
 }); 
-var requireArray = ['core','postal','Block','ViewBlock','Container','Page', 'chai'];
+var requireArray = ['core','postal','Block','ViewBlock','Container','Page', 'load', 'chai'];
 requireArray.push('json!../../tests/classes/block/testingPageBasicBlock.json');
 requireArray.push('json!../../tests/classes/block/testingPageTextBlock.json');
 requireArray.push('mocha');
 
-require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page, chai, basicPageJSON, textPageJSON){ 
+require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page, PageLoader, chai, basicPageJSON, textPageJSON){ 
   var expect = chai.expect; 
   mocha.setup('bdd'); 
 
@@ -651,11 +651,19 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		//gets the page this block is a part of
 		describe("#getPage()", function(){
 			it("should return a reference to the page if the block is part of a page", function(){
+				var loadedPage = PageLoader.loadPage(basicPageJSON);
+
+				console.log(loadedPage);
+
+				expect(loadedPage).to.exist;
+
 				//need unit test in here
 
 				//using blocks to create something
 			});
 			it("should return undefined if the block is not part of a page", function(){
+
+
 				var resultsBasic = blockBasic.getPage();
 
 				expect(resultsBasic).to.equal(void 0);
