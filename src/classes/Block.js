@@ -1,10 +1,10 @@
-define(['postal','backbone'], function(Postal, Backbone){ 
+define(['postal','backbone'], function(Postal, Backbone){
 	var Block = function(options){ 
 		var block = this; 
 
-		//the following might need to be moved to the end or the beginning or something 
-		_.extend(block, Backbone.Events); //extend the block with Backbone events functionality 
-		//just in case the below overwrites the above 
+		//the following might need to be moved to the end or the beginning or something
+		_.extend(block, Backbone.Events); //extend the block with Backbone events functionality
+		//just in case the below overwrites the above
 
 		//set block specific fields 
 		block._blockID = (options && options._blockID)? 
@@ -12,11 +12,11 @@ define(['postal','backbone'], function(Postal, Backbone){
 			_.uniqueId('_block'); 
 		if(options && options.blockID) block.blockID = options.blockID; 
 		if(options && options.parent) this.parent = options.parent; 
+		// blocks._set(this); 
 
-		//extend whitelisted attributes from defaults with user options 
-/*		var attrs = _.omit(options,['_blockID','blockID','model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events', 'parent', 'blockClass']); 
-		var attributes = _.defaults({}, attrs, _.result(this, 'defaults')); 
-*/
+		//set the whitelisted variables 
+		block._setWhiteList(options);
+
 		_.defaults(block, options, _.result(this, 'defaults'));
 
 		// _.extend(block, attributes);
@@ -32,29 +32,12 @@ define(['postal','backbone'], function(Postal, Backbone){
 
 */
 
-
-
-		//parent page 
-		block.page =(function findPage(child){ 
-			return 	(child.parent && child.parent.parent)? findPage(child.parent): 
-					(child.parent !== blocks)? child.parent: 
-					child; 
-		})(block); 
-
-		//tell blocksjs that this exists
-		if(window.blocks) window.blocks._set(block); 
+		//blocks._set(block); 
 	}; 
 
 	Block.prototype = { 
 		blockClass: 'Block', 
 /*
-
-
-
-
-make it so in/out creates an _ins and _outs if it's not created yet
-
-
 
 
 
@@ -70,21 +53,79 @@ otherwise, get/set will be a viewblock thing for now
 
 
 */
+		_setWhiteList: function(options){
+			var block = this;
+			var blacklist = []; //array of blacklisted variables in options
+			var defaults = _.result(this, 'defaults');
+
+			// console.log('THIS IS THE WHITELIST SETTER');
+			// console.log('defaults');
+			// console.log(defaults);
+
+			//look through options to see if anything is already set in block
+			_.each(options, function(value, key){
+				console.log('current Key: ',key);
+				if(key == '_blockID'){
+/*					console.log('defaults:  ', defaults);
+					console.log('block has:  ',_.has(block,key));
+					if(defaults)
+						console.log('defaults has:  ',_.has(defaults,key));
+*/				}
+				if(_.has(block,key) && (!defaults || !_.has(defaults,key))){
+					blacklist.push(key);
+				}
+			});
+			// console.log('blacklist');
+			// console.log(blacklist);
+			//_whitelist is the internal whitelist of variables that can be 
+			// got and set
+			var whitelistKeys = _.keys(_.defaults(_.omit(options, blacklist), defaults));
+			// console.log(_.omit(options, blacklist));
+			// console.log(_.defaults(_.omit(options, blacklist), defaults));
+
+
+			// console.log('whitelisted keys');
+			// console.log(whitelistKeys);
+			block._whitelist = {};
+			//turn it into an easy hashmap of whitelist keys -> true
+			_.each(whitelistKeys, function(key){
+				block._whitelist[key] = true;
+			});
+			block._whitelist.blockClass = false; //add blockClass to whitelist as false (see below for why)
+			// console.log('\n\nACTUAL WHITELIST\n');
+			// console.log(block._whitelist);
+		},
 		get: function(key){
 			var block = this;
-			if(!key){ //if no parameters passed in
-				return block;
-			} else if(!block.hasOwnProperty(key)){ //if property doesn't exist
+			if(!key){ //if no parameters passed in, return whitelist for everything
+				return block._getAll();
+			} else if(!_.has(block._whitelist, key)){ //if property isn't in the internal whitelist
+				if(key == 'blockClass')
+					console.log('\n\n\n\n\nBLOCK CLASS IN GET\n\n\n\n\n');
+				// console.log('whitelist failure');
+				// console.log(block._whitelist);
+				return void 0;
+			} else if(!_.has(block,key) && !_.has(Object.getPrototypeOf(block),key)){ //if property doesn't exist on the block
 				return void 0;
 			} else{
 				return block[key]; //otherwise return property value
 			}
 		}, 
+		_getAll: function(){
+			var block = this;
+			var values = {};
+			_.each(block._whitelist, function(value, key){
+				values[key] = block.get(key);
+			});
+			return values;
+		},
 		set: function(key, value){
 			var block = this;
 			if(!key){
 				return void 0;
-			} else if(!block.hasOwnProperty(key)){ //if property doesn't exist
+			} else if(!block._whitelist[key]){ //if key isn't set to true in the whitelist
+				return void 0;
+			} else if(!_.has(block,key)){ //if property doesn't exist
 				return void 0;
 			} else if(value === void 0){
 				return false;
@@ -111,19 +152,44 @@ otherwise, get/set will be a viewblock thing for now
 		},
 		//function to return reference to Page if block is part of Page
 		getPage: function(){
-			//must add search functionality to ensure page is still valid
-			if(this.page)
+			var block = this;
+			if(block.page)
 				return this.page;
 			else
 				return void 0;
 		},
-
+		//function that sets the page to the current page value (using findPage)
+		//and returns the page itself
+		_getPage: function(){
+			var block = this;
+			if(blocks){ //if blocks is defined, traverse the tree
+				block.page = block._findPage();
+				return block.page;
+			} else { //otherwise, there is no tree to traverse
+				block.page = void 0;
+				return void 0;
+			}
+		},
+		//function to traverse the parent tree until it hits the page,
+		//then returns said page
+		_findPage: function(){
+			var block = this;
+			if(blocks){
+				return (block.parent && child.parent.parent) ? block.parent._getPage():
+						(child.parent !== blocks) ? block.parent : block; 
+			} else {
+				return void 0;
+			}
+		},
 		// figure out everything that needs to be removed from the block ecosystem
 		//when you are deleting a block. put that in here.
 		//if it is completely insubstantial, remove this function.
 		remove: function(){ 
+			var block = this;
+			block.clearOuts();
+			block.clearIns();
 			if(blocks)
-				blocks._remove(this); 
+				blocks._remove(block); 
 		}, 
 
 		/*
@@ -148,35 +214,32 @@ otherwise, get/set will be a viewblock thing for now
 
 
 		*/
-		saveState: function(){ 
-			var state, arr; 
-			state = {}; 
+		toJSON: function(){ 
+			var block = this;
+			var JSON = {};
+			_.each(block._whitelist, function(val, key){
+				JSON[key] = block[key];
+			})
+			if(block.blockID)
+				JSON.blockID = block.blockID;
 
-			//set model and view 
-			state.view = this.toJSON(); 
-			state.model = this.model.toJSON(); 
-
-			return state; 
+			return JSON;
 		}, 
-		/*
-
-
-update this so that it returns block and doesn't ignore that
-
-
-
-		*/
 		getClassAncestry: function(){
 			var block = this;
 			if(block.blockClass === 'Block')
-				return [];
+				return ['Block'];
 			else{
-				var ancestry = [block.superClass];
-				if(block.superClass !== 'Block'){
+				var ancestry = [block.blockClass];
+				if(block.superClass){
 					ancestry = ancestry.concat(block.super.getClassAncestry());
 				}
 				return ancestry;
 			}
+		},
+		//alias for get class list above
+		getClassList: function(){
+			return this.getClassAncestry();
 		},
 		//function to set an input stream through Postal on the block
 		in: function(attribute, topic, channel){
@@ -302,4 +365,4 @@ update this so that it returns block and doesn't ignore that
 		}
 	}; 
 	return Block; 
-}); 
+});
