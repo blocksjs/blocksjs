@@ -13,10 +13,15 @@ define(['ViewBlock', 'CSS'], function(ViewBlock, CSS){
 		}, 
 		skeleton: {
 			model: {
+<<<<<<< HEAD
+=======
+				x: 'settings.x', 
+>>>>>>> ebf8dc379ed9bc183f74729848d348b9abb0358d
 				background: "settings.background", 
 				text: 'woeifjweoifjewofi'
 			}, 
 			view: {
+<<<<<<< HEAD
 				x: 'settings.x', 
 				y: 'settings.y', 
 				css: 'settings.css'
@@ -28,6 +33,23 @@ define(['ViewBlock', 'CSS'], function(ViewBlock, CSS){
 		initialize: function(options){ 
 			var block = this; 
 			ViewBlock.prototype.initialize.call(this, options);
+=======
+				css: {
+					position:'fixed', 
+					background:'green', 
+					'width':'100px', 
+					'height':'100px'
+				}
+			}
+		}, 
+		template: 	function(dat){
+			console.log('dattttt', dat.poopsie); 
+			return _.template('<p>ohheeeey from da <b><% print(data.text || "HTML") %></b> block</p>', dat, {variable: 'data'}); 
+		}, 
+		initialize: function(options){ 
+			var block = this; 
+			ViewBlock.prototype.initialize.call(this, options); 
+>>>>>>> ebf8dc379ed9bc183f74729848d348b9abb0358d
 
 			//add css classes based on block classes 
 			this.el.classList.add(this.blockClass); 

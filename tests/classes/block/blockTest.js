@@ -1,5 +1,5 @@
 require.config({ 
-  baseUrl:'../../../src2/classes', 
+  baseUrl:'../../../src/classes', 
   waitSeconds: 10, 
   paths : {
     text : '../requirePlugins/text', //text plugin
@@ -61,12 +61,12 @@ require.config({
     	location:'./',
     	main:'Block'
     },
-    {
+/*    {
     	name:'TextBlock',
     	location:'./',
     	main:'TextBlock'
     },
-    {
+*/    {
     	name:'Container',
     	location:'./',
     	main:'Container'
@@ -75,16 +75,35 @@ require.config({
     	name:'Page',
     	location:'./',
     	main:'Page'
-    }
-
+    },
+	{ 
+		name: 'create', 
+		location: '../modules', 
+		main: 'Create' 
+	}, 
+	{ 
+		name: 'io', 
+		location: '../modules', 
+		main: 'IO' 
+	}, 		
+	{ 
+		name: 'query', 
+		location: '../modules', 
+		main: 'Query' 
+	}, 
+	{ 
+		name: 'load', 
+		location: '../modules', 
+		main: 'PageLoader' 
+	}, 
   ] 
 }); 
-var requireArray = ['core','postal','Block','TextBlock','Container','Page', 'chai'];
+var requireArray = ['core','postal','Block',/*'TextBlock',*/'Container','Page', 'chai'];
 requireArray.push('json!../../tests/classes/block/testingPageBasicBlock.json');
 requireArray.push('json!../../tests/classes/block/testingPageTextBlock.json');
 requireArray.push('mocha');
 
-require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, containerClass, pageClass, chai, basicPageJSON, textPageJSON){ 
+require(requireArray, function(Blocks, Postal, blockClass,/* textBlockClass, */containerClass, pageClass, chai, basicPageJSON, textPageJSON){ 
   var expect = chai.expect; 
   mocha.setup('bdd'); 
 
@@ -108,7 +127,9 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 		var textPage = {};//Blocks.loadPage(textPageJSON);
 		var blockTextInPage = {};//basicPage.getBlocksByClassName('TextBlock');
 
-		var blockText = new textBlockClass();
+		// var blockText = new textBlockClass();
+		var blockText = new blockClass();
+
 		console.log(blockText.get());
 		console.log('FIRST MAJR');
 
@@ -162,6 +183,12 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 		//sets a whitelisted variable (from attributes)
 		//set ( key , new value )
 		describe("#set()", function(){
+			var blockBasic = new blockClass({
+				tragic: 7,
+				magic: 7,
+				dragic: 7
+			});
+
 			it("should return undefined if you haven't passed in any parameters", function(){
 				var resultsBasic = blockBasic.set();
 				// var resultsPageBasic = blockBasicInPage.set();
@@ -184,23 +211,46 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 			});
 			it("should return false if you haven't passed in a valid value to be set", function(){
 				// var resultsText = blockTextInPage.set('text');
-				var resultsText = blockText.set('text');
+				// var resultsText = blockText.set('text');
+				var result = blockBasic.set('magic');
 
-				expect(resultsText).to.equal(false);
+				expect(result).to.equal(false);
 			});
 			it("should return the block if everything is valid", function(){
 				// var result = blockTextInPage.set('text', 'shanaynay');
-				var resultText = blockText.set('text', 'shanaynay');
+				// var resultText = blockText.set('text', 'shanaynay');
+				var result = blockBasic.set('magic', 'tragic');
 
 				// expect(result).to.equal(blockTextInPage);
-				expect(resultText).to.equal(blockText);
+				// expect(resultText).to.equal(blockText);
+				expect(result).to.equal(blockBasic);
 			});
 			it("should successfully update the property that is changing if parameters are valid", function(){
-				// blockTextInPage.set('text', 'twiddlydiddly');
-				blockText.set('text','shanaynay');
+				// var result = blockTextInPage.set('text', 'shanaynay');
+				// var resultText = blockText.set('text', 'shanaynay');
+				blockBasic.set('magic', 'tragic');
 
-				// expect(blockTextInPage.get('text')).to.equal('twiddlydiddly');				
-				expect(blockText.get('text')).to.equal('shanaynay');
+				// expect(result).to.equal(blockTextInPage);
+				// expect(resultText).to.equal(blockText);
+				expect(blockBasic.get('magic')).to.equal('tragic');
+			});
+			it("should trigger an 'attribute:change' event when setting successfully ", function(){
+				var thingy = false;
+				blockBasic.on('dragic:change',function(){
+					thingy = 'shmo';
+				});
+				blockBasic.set('dragic','WHOWA');
+				expect(thingy).to.equal('shmo');
+			});
+			it("should trigger a change event every time something sets", function(){
+				var count = 0;
+				blockBasic.on('change', function(){
+					count++;
+				});
+				blockBasic.set('dragic','goran');
+				blockBasic.set('tragic','moran');
+				blockBasic.set('magic','floran');
+				expect(count).to.equal(3);
 			});
 		});
 
@@ -280,7 +330,8 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 			});
 			it("should return the view attributes if they come set", function(){
 				blockText = undefined;
-				blockText = new textBlockClass();
+				// blockText = new textBlockClass();
+				blockText = new blockClass();
 				var newResultsText = blockText.toJSON();
 
 				console.log(blockText.get());
@@ -304,7 +355,8 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 				expect(resultsText).to.equal({className:'TextBlock', text:'herro', type:'p'});
 			});
 			it("should return the updated view data if extra view attributes are added or updated dynamically", function(){
-				blockText = new textBlockClass();
+				// blockText = new textBlockClass();
+				blockText = new blockClass();
 				blockText.set('text', 'herro');
 				var resultsText = blockText.toJSON();
 
@@ -397,8 +449,14 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 
 		//a convenience function to create subscriptions
 		describe("#in(attribute, topic, channel)", function(){
-			blockBasic = new blockClass();
-			blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
+			var blockBasic = new blockClass({
+				tragic: 7,
+				magic: 7,
+				dragic: 7
+			});
+			console.log('GET DA TINGY');
+			console.log(blockBasic.get('magic'));
+			// blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
 			blockBasic.jeremy = function(data){
 				blockBasic.lin = data;
 			}
@@ -423,7 +481,7 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 			it("should return false if the attribute is not a white listed variable in block", function(){
 // NEED TO FIX THIS SO THAT IT'S WHITE LISTED
 	//maybe not anymore
-				expect(blockBasic.in('blockClass', 'topic')).to.equal(false);
+				//expect(blockBasic.in('blockClass', 'topic')).to.equal(false);
 			});
 			it("should create a subscription on the topic to change the attribute with incoming data if the attribute is a non-function in block", function(){
 				blockBasic.in('magic', 'topic');
@@ -432,7 +490,7 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 					data: 'shmata'
 				});
 				//perhaps might need to set timeout here
-				expect(blockBasic.magic).to.equal('shmata');
+				expect(blockBasic.get('magic')).to.equal('shmata');
 			});
 			it("should create a subscription on the topic to call the attribute in block if it is a function in block", function(){
 				blockBasic.in('jeremy', 'topic');
@@ -440,7 +498,6 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 					topic:'topic',
 					data: 'linning!'
 				});
-				//perhaps might need to TIMEOUT
 				expect(blockBasic.lin).to.equal('linning!');
 			});
 			it("should do the same as the above two tests, but set a channel as well, if a channel is passed in", function(){
@@ -458,8 +515,14 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 					data: 'shmatata'
 				});
 				//perhaps might need to set timeout here
-				expect(blockBasic.magic).to.equal('batata');
+				expect(blockBasic.get('magic')).to.equal('batata');
 				expect(blockBasic.lin).to.equal('shmatata');
+			});
+			it("should create a new _ins if it is not created yet", function(){
+				var blockNew = new blockClass({dragic:'er'});
+				expect(blockNew._ins).to.not.exist;
+				blockNew.in('dragic', 'jjajj');
+				expect(blockNew._ins).to.exist;
 			});
 			it("should set a new array (keyed with attribute) on the internal _ins object in block if this attribute doesn't have any subscriptions yet", function(){
 				expect(blockBasic._ins.dragic).to.equal(void 0);
@@ -484,8 +547,13 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 
 		//a convenience function to create publishers that publish on attribute changes
 		describe("#out(attribute, topic, channel", function(){
-			blockBasic = new blockClass();
-			blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
+			var blockBasic = new blockClass({
+				tragic: 7,
+				magic: 7,
+				dragic: 7
+			});
+
+			// blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
 			blockBasic.outs = {
 				magic: true,
 				tragic: true,
@@ -501,21 +569,27 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 				expect(blockBasic.out('magic')).to.equal(void 0);
 			});
 			it("should return false if the attribute is not a white listed variable in block", function(){
-				expect(blockBasic.out('blockClass', 'herro')).to.equal(false);
+				//expect(blockBasic.out('blockClass', 'herro')).to.equal(false);
 			});
-			it("should listen to the attribute passed in, publishing any changes on the topic passed in", function(){
+			it("should listen to the attribute passed in, publishing any changes on the topic passed in", function(done){
 				blockBasic.out('magic','topic');
 				var booltime = false;
 				Postal.subscribe({
 					topic: 'topic',
 					callback: function(data){
+						console.log('herro');
 						booltime = data;
 					}
 				});
-				blockBasic.magic = 'triangle';
+				blockBasic.set('magic','triangle');
 				//might need more time
-				expect(booltime).to.equal('triangle');
-			});
+					expect(booltime).to.equal('triangle');
+					done();
+/*				setTimeout(function(){
+					expect(booltime).to.equal('triangle');
+					done();
+				}, 400);
+*/			});
 			it("should listen to the attribute passed in, publishing any changes on the topic & channel passed in (if channel also passed)", function(){
 				blockBasic.out('magic','topic','chancy');
 				var booltime = false;
@@ -526,14 +600,21 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 						booltime = data*2;
 					}
 				});
-				blockBasic.magic = 4;
+				blockBasic.set('magic',4);
 				//might need more time
 				expect(booltime).to.equal(8);
 			});
+			it("should create a new object _outs if it does not exist", function(){
+				var blockNew = new blockClass({dragic:'er'});
+				expect(blockNew._outs).to.not.exist;
+				blockNew.out('dragic', 'jjajj');
+				expect(blockNew._outs).to.exist;
+			});
 			it("should set a new array (keyed with attribute) on the internal _outs object in block if this attribute doesn't have any subscriptions yet (with the callback for listenTo)", function(){
-				expect(blockBasic._outs.dragic).to.equal(void 0);
+				expect(blockBasic._outs.dragic).to.not.exist;
 				blockBasic.out('dragic', 'shloof');
-				expect(blockBasic._outs.dragic).length(1);
+				expect(blockBasic._outs.dragic).to.exist;
+				expect(blockBasic._outs.dragic.length).to.equal(1);
 			});
 			it("should push a new callback for listenTo onto the array (keyed with attribute) on the internal _outs object in block if this attribute already has subscriptions", function(){
 				expect(blockBasic._outs.tragic).to.equal(void 0);
@@ -549,8 +630,11 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 
 		//a convenience function to clear all subscriptions on an attribute
 		describe("#clearIns(attribute)", function(){
-			blockBasic = new blockClass();
-			blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
+			var blockBasic = new blockClass({
+				tragic: 7,
+				magic: 7,
+				dragic: 7
+			});
 			blockBasic.ins = {
 				magic: true,
 				tragic: true,
@@ -585,8 +669,9 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 			it("should delete the array for the attribute passed if an array previously existed within _ins", function(){
 				blockBasic.in('magic', 'topic');
 				blockBasic.in('magic', 'otherTopic', 'channel');
+				expect(blockBasic._ins.magic).to.exist;
 				blockBasic.clearIns('magic');
-				expect(blockBasic._ins).to.be.empty;
+				expect(blockBasic._ins.magic).to.not.exist;
 			});
 			it("should unsubscribe from all subscriptions in _ins if no attributes passed in", function(){
 				blockBasic.in('magic', 'topic');
@@ -626,8 +711,13 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 
 		//a convenience function to clear all listeners on an attribute that publish a message
 		describe("#clearOuts(attribute)", function(){
-			blockBasic = new blockClass();
-			blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
+			var blockBasic = new blockClass({
+				tragic: 7,
+				magic: 7,
+				dragic: 7
+			});
+
+			// blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
 			blockBasic.outs = {
 				magic: true,
 				tragic: true,
@@ -662,7 +752,7 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 					}
 				});
 				blockBasic.clearOuts('tragic');
-				blockBasic.tragic = 'face';
+				blockBasic.set('tragic','face');
 				expect(shmoop).to.equal('doop');
 			});
 			it("should delete the array for the attribute passed if an array previously existed within _outs", function(){
@@ -693,7 +783,7 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 					}
 				});
 				blockBasic.clearOuts();
-				blockBasic.tragic = 'face';
+				blockBasic.set('tragic','face');
 				expect(shmoop).to.equal('doop');
 			});
 			it("should have an empty object for _outs after after clearOuts is called without an attribute", function(){
@@ -713,13 +803,17 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 
 		//internal clear for singular attribute in
 		describe("#_clearIn(attribute)", function(){
-			blockBasic = new blockClass();
-			blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
+			var blockBasic = new blockClass({
+				tragic: 7,
+				magic: 7,
+				dragic: 7
+			});
 			blockBasic.ins = {
 				magic: true,
 				tragic: true,
 				dragic: true
 			};
+
 			blockBasic.in('magic','tragic');
 			blockBasic.in('tragic', 'topic', 'channel');
 
@@ -747,8 +841,13 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 
 		//internal clear for singular attribute out
 		describe("#_clearOut(attribute)", function(){
-			blockBasic = new blockClass();
-			blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
+			var blockBasic = new blockClass({
+				tragic: 7,
+				magic: 7,
+				dragic: 7
+			});
+
+			// blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
 			blockBasic.outs = {
 				magic: true,
 				tragic: true,
@@ -775,7 +874,7 @@ require(requireArray, function(Blocks, Postal, blockClass, textBlockClass, conta
 					}
 				});
 				blockBasic._clearOut('magic');
-				blockBasic.magic = 'squareface';
+				blockBasic.set('magic', 'squareface');
 				expect(beats).to.equal('beats');
 			});
 			it("should delete the array for the attribute passed in in _outs", function(){
