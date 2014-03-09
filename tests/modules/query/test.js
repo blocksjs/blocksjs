@@ -1,5 +1,5 @@
 require.config({ 
-  baseUrl:'./../../src/classes', 
+  baseUrl:'../../../src/classes', 
   waitSeconds: 10, 
   paths: {
      json:'../requirePlugins/json',
@@ -66,6 +66,8 @@ require.config({
 require(['core'], function(core){ 
   var expect = chai.expect; 
   mocha.setup('bdd'); 
+  var blocks = window.blocks = new core; 
+  
   //Blocks Core API 
   describe('core', function(){ 
     var blocks = window.blocks = new core;      

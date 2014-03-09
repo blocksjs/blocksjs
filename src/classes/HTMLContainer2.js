@@ -71,7 +71,7 @@ define(['HTMLContainer'], function(HTMLContainer){
 				                "color": "white"
 				              }
 				            }
-						}					
+						}
 					}
 				}, 
 				{

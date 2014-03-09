@@ -12,17 +12,13 @@ define(['ViewBlock', 'CSS'], function(ViewBlock, CSS){
 			'-moz-transition':'all .5s' 
 		}, 
 		skeleton: {
-			model: {
-				background: "settings.background", 
-				text: 'woeifjweoifjewofi'
-			}, 
 			view: {
 				x: 'settings.x', 
 				y: 'settings.y', 
 				css: 'settings.css'
-			}
+			} 
 		}, 
-		template: 	function(dat){
+		template: 	function(dat){ 
 			return _.template('<p><b><% print("HTMLBlock") %></b></p>', dat, {variable: 'data'}); 
 		}, 
 		initialize: function(options){ 

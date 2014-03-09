@@ -1,6 +1,6 @@
 define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container", "Page", "create", "io", "query", "load"], function($, _, Backbone, less, postal, Block, Container, Page,create, io, query, load){
-    'use strict;'
-    var core = function(settings, callback){
+    'use strict;' 
+    var core = function(settings, callback){ 
         //it would be cool to have this as a singleton object like jquery 
         //that way you can do blocks('.Panel') and 
         //get an array of the panel objects. 

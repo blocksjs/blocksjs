@@ -47,7 +47,7 @@ define(['require','jquery', 'underscore', 'backbone'], function(require, $, _, B
 				if(rotZ) ret += 'rotateZ(' + rotZ + 'deg) '; 
 
 				//scale properties
-				if(scaleX || scaleY) ret += 'scale3d(' + (scaleX || 0) + ', ' + (scaleY || 0) + ') '; 
+				if(scaleX || scaleY) ret += 'scale(' + (scaleX || 0) + ', ' + (scaleY || 0) + ') '; 
 
 				//skew properties
 				if(skewX || skewY) ret += 'skew(' + (skewX || 0) + 'deg, ' + (skewY || 0) + 'deg) '; 

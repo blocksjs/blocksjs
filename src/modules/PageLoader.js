@@ -1,7 +1,8 @@
-define(['io','create', 'query'], function(io, create, query){
-	return {
+define(['io','create', 'query'], function(io, create, query){ 
+	return { 
 		//takes the state JSON and creates a page collection  
         loadPage: function( settings, callback ){ 
+            
             //adds all of the classes from the settings.classes list, prefixes it with require so we can call them later 
             var controller = this; 
 
@@ -25,7 +26,7 @@ define(['io','create', 'query'], function(io, create, query){
                 io.loadClasses.call(controller, ['Block', 'Container', 'Page'].concat(json.classes || []), function(){
 
                     //create Page block 
-                    create.createBlock.call(controller, json.content.view.blockClass || 'Page', json.content || {}, function(page){ 
+                    create.createBlock.call(controller, json.content.blockClass || json.content.view.blockClass || 'Page', json.content || {}, function(page){ 
 
                         //start page, if async loading is used then render immediately 
                         child.content = page; 

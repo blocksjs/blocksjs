@@ -63,7 +63,7 @@ require.config({
 		}, 
 	]
 }); 
-require(['core', 'json!/src/index.json'], function(core, settings){
+require(['core', 'json!/examples/tree/index.json'], function(core, settings){
 	var blocks = window.blocks = new core(settings, function(){
 		//start module 
 	}); 

@@ -1,151 +1,49 @@
 {
   "name": "test5 ",
   "classes": [
-    "HTMLBlock"
+    "Tree"
   ],
   "content": {
     "view": {
       "blockClass": "Page"
     },
-    "subcollection": [
+    "children": [
       {
-        "view": {
-          "x": "635",
-          "y": "231",
-          "z": "0",
-          "css": {
-            "position": "fixed",
-            "width": "200px",
-            "height": "200px",
-            "max-height": "100%",
-            "max-width": "100%",
-            "text-align": "center",
-            "border": "1px black dotted",
-            "background-color": "rgba(100, 100, 100, .7)",
-            "z-index": "0",
-            "&:hover": {
-              "background-color": "rgba(0,0,20,1)",
-              "color": "white"
-            }
-          },
-          "blockClass": "HTMLBlock"
+        "blockClass":"Tree", 
+        "settings":{
+          "x": 100, 
+          "y": -100, 
+          "scaleX": ".2", 
+          "scaleY": ".2"
         }
-      },
+      }, 
       {
-        "view": {
-          "x": "489",
-          "y": "324",
-          "z": "0",
-          "css": {
-            "position": "fixed",
-            "width": "200px",
-            "height": "200px",
-            "max-height": "100%",
-            "max-width": "100%",
-            "text-align": "center",
-            "border": "1px black dotted",
-            "background-color": "rgba(100, 100, 100, .7)",
-            "z-index": "0",
-            "&:hover": {
-              "background-color": "rgba(0,0,20,1)",
-              "color": "white"
-            }
-          },
-          "blockClass": "HTMLBlock"
+        "blockClass":"Tree", 
+        "settings":{
+          "x": 200, 
+          "y": -100, 
+          "scaleX": ".2", 
+          "scaleY": ".2"
         }
-      },
+      }, 
       {
-        "view": {
-          "x": "389",
-          "y": "195",
-          "z": "0",
-          "css": {
-            "position": "fixed",
-            "width": "200px",
-            "height": "200px",
-            "max-height": "100%",
-            "max-width": "100%",
-            "text-align": "center",
-            "border": "1px black dotted",
-            "background-color": "rgba(100, 100, 100, .7)",
-            "z-index": "0",
-            "&:hover": {
-              "background-color": "rgba(0,0,20,1)",
-              "color": "white"
-            }
-          },
-          "blockClass": "HTMLBlock"
+        "blockClass":"Tree", 
+        "settings":{
+          "x": 300, 
+          "y": -100, 
+          "scaleX": ".2", 
+          "scaleY": ".2"
         }
-      },
+      }, 
       {
-        "view": {
-          "x": "461",
-          "y": "39",
-          "z": "0",
-          "css": {
-            "position": "fixed",
-            "width": "200px",
-            "height": "200px",
-            "max-height": "100%",
-            "max-width": "100%",
-            "text-align": "center",
-            "border": "1px black dotted",
-            "background-color": "rgba(100, 100, 100, .7)",
-            "z-index": "0",
-            "&:hover": {
-              "background-color": "rgba(0,0,20,1)",
-              "color": "white"
-            }
-          },
-          "blockClass": "HTMLBlock"
+        "blockClass":"Tree", 
+        "settings":{
+          "x": 400, 
+          "y": -100, 
+          "scaleX": ".2", 
+          "scaleY": ".2"
         }
-      },
-      {
-        "view": {
-          "x": "239",
-          "y": "305",
-          "z": "0",
-          "css": {
-            "position": "fixed",
-            "width": "200px",
-            "height": "200px",
-            "max-height": "100%",
-            "max-width": "100%",
-            "text-align": "center",
-            "border": "1px black dotted",
-            "background-color": "rgba(100, 100, 100, .7)",
-            "z-index": "0",
-            "&:hover": {
-              "background-color": "rgba(0,0,20,1)",
-              "color": "white"
-            }
-          },
-          "blockClass": "HTMLBlock"
-        }
-      },
-      {
-        "view": {
-          "x": "366",
-          "y": "425",
-          "z": "0",
-          "css": {
-            "position": "fixed",
-            "width": "200px",
-            "height": "200px",
-            "max-height": "100%",
-            "max-width": "100%",
-            "text-align": "center",
-            "border": "1px black dotted",
-            "background-color": "rgba(100, 100, 100, .7)",
-            "z-index": "0",
-            "&:hover": {
-              "background-color": "rgba(0,0,20,1)",
-              "color": "white"
-            }
-          },
-          "blockClass": "HTMLBlock"
-        }
-      }
+      }    
     ]
   }
 }
