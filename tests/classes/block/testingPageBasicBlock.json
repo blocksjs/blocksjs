@@ -1,14 +1,32 @@
 {
   "name": "Testing Page",
-  "page": {
-    "viewProps": {
-      "className": "Page"
-    },
-    "subcollection": [
-    {
-      "viewProps": {
-        "className": "Block"
+  "classes":[
+    "ViewBlock",
+    "HTMLContainer",
+    "Container",
+    "HTMLBlock",
+    "Page"
+  ],
+  "content": {
+    "blockClass":"Page",
+    "children":[
+      {
+        "blockClass":"ViewBlock"
+      },
+      {
+        "blockClass":"HTMLContainer",
+        "children":[
+          {
+            "blockClass":"Block"
+          },
+          {
+            "blockClass":"Container"
+          }
+        ]
+      },
+      {
+        "blockClass":"HTMLBlock"
       }
-    }]
+    ]
   }
 }

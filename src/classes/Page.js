@@ -3,6 +3,7 @@ define(["HTMLContainer"], function(HTMLContainer){
 	var Page = HTMLContainer.extend({ 
 		blockClass: 'Page', 
 		superClass: 'HTMLContainer',  
+		super: HTMLContainer.prototype,
 		defaultCSS: _.extend({}, HTMLContainer.prototype.defaultCSS, { 
 			position:'fixed', 
 			width	: '100%', 
