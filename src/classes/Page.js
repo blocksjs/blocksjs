@@ -1,4 +1,4 @@
-define(["HTMLContainer"], function(HTMLContainer){ 
+define(["HTMLContainer", "postal"], function(HTMLContainer, Postal){ 
 	//Page View 
 	var Page = HTMLContainer.extend({ 
 		blockClass: 'Page', 
@@ -23,7 +23,7 @@ define(["HTMLContainer"], function(HTMLContainer){
 			this.renderCSS(); 
 
 			//tell everything that is has it rendered 
-			postal.publish('pageRender'); 
+			Postal.publish('pageRender'); 
 
 			return this; 
 	   	}, 
@@ -59,7 +59,7 @@ define(["HTMLContainer"], function(HTMLContainer){
 				}
 			})(this); 	
 			ret.classes = _.uniq(ret.classes); 
-			console.log('RET: ', ret); 	
+			//console.log('RET: ', ret); 	
 			//return the page object as necessary for the settings json object to load the page later 
 			return ret
 		}, 

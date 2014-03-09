@@ -107,51 +107,12 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
   var expect = chai.expect; 
   mocha.setup('bdd'); 
 
-	//view JSON
-
-
-	//model JSON
-
-
+  	window.blocks = new Blocks(); //set up the global core system
 
 	describe("Block", function(){
 
-		console.log(Blocks);
 		//basic block with default configurations
-		var blockBasic = new Block(); //Blocks.createBlock({});
-		console.log(blockBasic);
-
-
-/*		
-		other configurations to test. to be moved elsewhere.
-
-		//basic block with default configurations created as part of a page
-		var basicPage = {};//Blocks.loadPage(basicPageJSON);
-		var blockBasicInPage = {};//basicPage.getBlocksByClassName('Block');
-		//text block with default configurations created as part of a page
-		var textPage = {};//Blocks.loadPage(textPageJSON);
-		var blockTextInPage = {};//basicPage.getBlocksByClassName('TextBlock');
-
-		// var blockText = new textBlockClass();
-		var blockText = new Block();
-
-		console.log(blockText.get());
-		console.log('FIRST MAJR');
-
-		//block with view config but no model
-		var blockView;
-		//block with model config but no view
-		var blockModel;
-		//block with both model & view configs
-		var blockViewModel;
-
-		//block with view config but no model created as part of a page
-		var blockViewInPage;
-		//block with model config but no view created as part of a page
-		var blockModelInPage;
-		//block with both model & view configs created as part of a page
-		var blockViewModelInPage;
-*/
+		var blockBasic = new Block(); 
 
 		//new block type that extends Block with some defaults
 			var BlockDefaults = function(options){
@@ -187,7 +148,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		//the following tests make sure things that happen in the constructor 
 		//work properly. separate functions called from the constructor are tested
 		//separately below the constructor description.
-		describe("#constructor", function(){
+		describe("constructor", function(){
 			it("should return a block successfully and for said block to be an object", function(){
 				var basicBlock = new Block();
 				expect(basicBlock).to.exist;
@@ -254,7 +215,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		});
 
 		//the following tests make sure that the whitelist is set properly
-		describe("#_whitelist", function(){
+		describe("_whitelist", function(){
 			it("should exist in a regular block", function(){
 				var basicBlock = new Block();
 				expect(basicBlock._whitelist).to.exist;
@@ -316,7 +277,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		});
 
 		//gets a whitelisted variable (from attributes)
-		describe("#get()", function(){
+		describe("get()", function(){
 			var blockBasic = new Block({
 				magic: '3'
 			});
@@ -373,7 +334,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 
 		//sets a whitelisted variable (from attributes)
 		//set ( key , new value )
-		describe("#set()", function(){
+		describe("set()", function(){
 			var blockBasic = new Block({
 				tragic: 7,
 				magic: 7,
@@ -451,7 +412,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		});
 
 		//function to set user generated blockID
-		describe("#setID()",function(){
+		describe("setID()",function(){
 			it("should return false if no ID is passed in",function(){
 				expect(blockBasic.setID()).to.equal(false);
 				// expect(blockTextInPage.setID()).to.equal(false);
@@ -494,7 +455,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		});
 
 		//function to get user generated blockID
-		describe("#getID()",function(){
+		describe("getID()",function(){
 			var	blockBasic = new Block();
 			it("should return undefined if no ID has been set", function(){
 				expect(blockBasic.getID()).to.equal(void 0);
@@ -508,7 +469,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 
 		//returns the block's whitelisted variables + classname
 		//in the json format
-		describe("#toJSON()", function(){
+		describe("toJSON()", function(){
 			it("should return solely the className if the Block has no extra model or view data", function(){
 				//check for both standard Block and something that extends it
 				var blockBasic = new Block();
@@ -546,16 +507,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 					blockClass: 'Block'
 				}, blockBasic.toJSON());
 			});
-/*			it("should return the model data if model is set", function(){
-				expect(false).to.equal(true);
-			});
-			it("should return the updated model data if model is set and then updated dynamically", function(){
-				expect(false).to.equal(true);
-			});
-			it("should return the view data if extra view data is passed in via json settings", function(){
-				expect(false).to.equal(true);
-			});
-*/			it("should return an up-to-date version of the block if it was updated dynamically", function(){
+			it("should return an up-to-date version of the block if it was updated dynamically", function(){
 				var blockBasic = new Block({
 					hello: 'bello',
 					smack: 'shack'
@@ -586,28 +538,9 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 				}, defaultsBlock.toJSON());
 			});
 		});
-/*
-		//initializes the object
-		describe("#initialize()", function(){
-			it("should set attributes if attributes are passed in as a hash", function(){
-			//hash cannot use the following keys: model, collection, el, id, className, tagName, attributes and events
-				var hash = {'magic':'tragic','tragic':'bronson','number':10};
-				var newBlock = new Block(hash);
 
-				expect(JSON.stringify(newBlock.get())).to.equal(JSON.stringify(hash));
-			});
-			it("should create an internal _blockID",function(){
-				
-			});
-		});
-
-		//renders the object
-		describe("#render()", function(){
-
-		});
-*/
 		//removes the object and all variable references/event listeners therewithin
-		describe("#remove()", function(){
+		describe("remove()", function(){
 			it("should remove all attributes from memory", function(){
 
 			});
@@ -620,7 +553,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		});
 
 		//returns an array of ancestors (className) from most recent to Block
-		describe("#getClassAncestry()", function(){
+		describe("getClassAncestry()", function(){
 			it("should return 'Block' for the base block class", function(){
 				var resultsBasic = blockBasic.getClassAncestry();
 				// var resultsPageBasic = blockBasicInPage.getClassAncestry();
@@ -649,21 +582,28 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		});
 
 		//gets the page this block is a part of
-		describe("#getPage()", function(){
-			it("should return a reference to the page if the block is part of a page", function(){
-				var loadedPage = PageLoader.loadPage(basicPageJSON);
+		describe("getPage()", function(){
+			it("should return a reference to the page if the block is part of a page", function(done){
+				window.blocks.loadPage(basicPageJSON, function(loadedPage){
+					expect(loadedPage).to.exist;
+					console.log(loadedPage);
+					console.log(loadedPage.content.subcollection);
+					setTimeout(function(){
+						expect(loadedPage.content.subcollection[0].view.blockClass).to.equal('Block');
+						expect(loadedPage.content.subcollection[1].view.blockClass).to.equal('HTMLContainer');
+						expect(loadedPage.content.subcollection[1].subcollection[1].view.blockClass).to.equal('HTMLContainer');
+						expect(loadedPage.content.subcollection[2].view.blockClass).to.equal('HTMLBlock');
+						expect(loadedPage.content.view.blockClass).to.equal('Page');
+						done();
+					}, 50);
+				});
 
-				console.log(loadedPage);
-
-				expect(loadedPage).to.exist;
 
 				//need unit test in here
 
 				//using blocks to create something
 			});
 			it("should return undefined if the block is not part of a page", function(){
-
-
 				var resultsBasic = blockBasic.getPage();
 
 				expect(resultsBasic).to.equal(void 0);
@@ -671,7 +611,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		});
 
 		//traverses block tree to get the page that this is a part of
-		describe("#_findPage", function(){
+		describe("_findPage", function(){
 			it("should return a reference to the page if the block is part of a page", function(){
 				//need unit test in here
 
@@ -685,26 +625,32 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		});
 
 		//traverses block tree to find page & sets the blocks page variable
-		describe("#_getPage", function(){
-			it("should set whatever findPage returns as the blocks page", function(){
+		describe("_getPage", function(){
+			it("should set whatever findPage returns as the blocks page if the blockClass is not 'Block'", function(){
+				var basicPage = new Page();
+				// another one for something in a page
+
+				basicPage._getPage();
+
+				expect(basicPage.getPage()).to.equal(basicPage._findPage());
+			});
+			it("should set the block's page to undefined if findPage returns a blockClass of 'Block'", function(){
 				var basicBlock = new Block();
 				// another one for something in a page
 
 				basicBlock._getPage();
 
-				expect(basicBlock.getPage()).to.equal(basicBlock._findPage());
+				expect(basicBlock.getPage()).to.equal(void 0);
 			});
 		});
 
 		//a convenience function to create subscriptions
-		describe("#in(attribute, topic, channel)", function(){
+		describe("in(attribute, topic, channel)", function(){
 			var blockBasic = new Block({
 				tragic: 7,
 				magic: 7,
 				dragic: 7
 			});
-			console.log('GET DA TINGY');
-			console.log(blockBasic.get('magic'));
 			// blockBasic.magic = blockBasic.tragic = blockBasic.dragic = 7;
 			blockBasic.jeremy = function(data){
 				blockBasic.lin = data;
@@ -795,7 +741,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		});
 
 		//a convenience function to create publishers that publish on attribute changes
-		describe("#out(attribute, topic, channel", function(){
+		describe("out(attribute, topic, channel", function(){
 			var blockBasic = new Block({
 				tragic: 7,
 				magic: 7,
@@ -826,7 +772,6 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 				Postal.subscribe({
 					topic: 'topic',
 					callback: function(data){
-						console.log('herro');
 						booltime = data;
 					}
 				});
@@ -878,7 +823,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		});
 
 		//a convenience function to clear all subscriptions on an attribute
-		describe("#clearIns(attribute)", function(){
+		describe("clearIns(attribute)", function(){
 			var blockBasic = new Block({
 				tragic: 7,
 				magic: 7,
@@ -959,7 +904,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		})
 
 		//a convenience function to clear all listeners on an attribute that publish a message
-		describe("#clearOuts(attribute)", function(){
+		describe("clearOuts(attribute)", function(){
 			var blockBasic = new Block({
 				tragic: 7,
 				magic: 7,
@@ -1051,7 +996,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		});
 
 		//internal clear for singular attribute in
-		describe("#_clearIn(attribute)", function(){
+		describe("_clearIn(attribute)", function(){
 			var blockBasic = new Block({
 				tragic: 7,
 				magic: 7,
@@ -1089,7 +1034,7 @@ require(requireArray, function(Blocks, Postal, Block, ViewBlock, Container, Page
 		});
 
 		//internal clear for singular attribute out
-		describe("#_clearOut(attribute)", function(){
+		describe("_clearOut(attribute)", function(){
 			var blockBasic = new Block({
 				tragic: 7,
 				magic: 7,

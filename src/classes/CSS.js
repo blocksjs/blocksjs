@@ -151,7 +151,8 @@ define(['require','jquery', 'underscore', 'backbone'], function(require, $, _, B
 				//let children define their css as well 
 				if( css.parent.subcollection && css.parent.subcollection.length > 0){ 
 					css.parent.subcollection.each(function(view){ 
-						CSSstring += view.css.render(); 
+						if(view.css)
+							CSSstring += view.css.render(); 
 					}); 
 				}; 
 
