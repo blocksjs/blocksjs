@@ -27,8 +27,10 @@ define(['Container', 'HTMLBlock'], function(Container, HTMLBlock){
 			}, 
 			addBlock: function(block){
 				var container = this; 
-				this.$el.append(block.render().el); 
+				if(block.render)
+					this.$el.append(block.render().el); 
 				window.requestAnimationFrame(function(){
+					//console.log(container);
 					container.page.renderCSS(); 
 				}); 
 				/*setTimeout(function(){

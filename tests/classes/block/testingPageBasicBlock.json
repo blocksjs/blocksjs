@@ -11,16 +11,16 @@
     "blockClass":"Page",
     "children":[
       {
-        "blockClass":"ViewBlock"
+        "blockClass":"Block"
       },
       {
         "blockClass":"HTMLContainer",
         "children":[
           {
-            "blockClass":"Block"
+            "blockClass":"HTMLBlock"
           },
           {
-            "blockClass":"Container"
+            "blockClass":"HTMLContainer"
           }
         ]
       },

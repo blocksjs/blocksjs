@@ -12,7 +12,6 @@ define(['postal','backbone'], function(Postal, Backbone){
 			_.uniqueId('_block'); 
 		if(options && options.blockID) block.blockID = options.blockID; 
 		if(options && options.parent) this.parent = options.parent; 
-		// blocks._set(this); 
 
 		//set the whitelisted variables 
 		block._setWhiteList(options);
@@ -31,8 +30,9 @@ define(['postal','backbone'], function(Postal, Backbone){
 
 
 */
-
-		blocks._set(block); 
+		block._getPage();
+		if(window.blocks)
+			window.blocks._set(block); 
 	}; 
 
 	Block.prototype = { 
@@ -100,10 +100,6 @@ otherwise, get/set will be a viewblock thing for now
 			if(!key){ //if no parameters passed in, return whitelist for everything
 				return block._getAll();
 			} else if(!_.has(block._whitelist, key)){ //if property isn't in the internal whitelist
-				if(key == 'blockClass')
-					console.log('\n\n\n\n\nBLOCK CLASS IN GET\n\n\n\n\n');
-				// console.log('whitelist failure');
-				// console.log(block._whitelist);
 				return void 0;
 			} else if(!_.has(block,key) && !_.has(Object.getPrototypeOf(block),key)){ //if property doesn't exist on the block
 				return void 0;
@@ -162,8 +158,13 @@ otherwise, get/set will be a viewblock thing for now
 		//and returns the page itself
 		_getPage: function(){
 			var block = this;
-			if(blocks){ //if blocks is defined, traverse the tree
+			if(window.blocks){ //if blocks is defined, traverse the tree
 				block.page = block._findPage();
+				if(block.page.blockClass == 'Block'){ //if top most thing is block
+					block.page = void 0;
+					return void 0; //set page to undefined and return
+				}
+				//console.log('PAGEE',block.page);
 				return block.page;
 			} else { //otherwise, there is no tree to traverse
 				block.page = void 0;
@@ -174,9 +175,13 @@ otherwise, get/set will be a viewblock thing for now
 		//then returns said page
 		_findPage: function(){
 			var block = this;
-			if(blocks){
-				return (block.parent && child.parent.parent) ? block.parent._getPage():
-						(child.parent !== blocks) ? block.parent : block; 
+			if(window.blocks){
+				if(block.parent && block.parent != window.blocks)
+					return block.parent._findPage();
+				else
+					return block;
+				// return (block.parent && block.parent.parent) ? block.parent._getPage():
+				// 		(block.parent !== blocks) ? block.parent : block; 
 			} else {
 				return void 0;
 			}
@@ -188,8 +193,8 @@ otherwise, get/set will be a viewblock thing for now
 			var block = this;
 			block.clearOuts();
 			block.clearIns();
-			if(blocks)
-				blocks._remove(block); 
+			if(window.blocks)
+				window.blocks._remove(block); 
 		}, 
 
 		/*
