@@ -6,7 +6,8 @@ for the page to use.
 
 
 
-###Zero: What is our index.json file? 
+###Zero: 
+####What is our index.json file? 
 With BlocksJS we should always be able to create a page by simply looking at the 
 list of blocks that are on the page and any settings they have. The BlocksJS engine 
 will parse it, look up the module definition of each blockClass and create each of 
@@ -60,7 +61,8 @@ on the page.
 } 
 ```
 
-###One Creating Blocks
+###One: 
+####Creating Blocks
 ***
 
 ####Create a Button 
@@ -156,7 +158,8 @@ This is a beautiful website on it's own, but let's make it actually do something
 Ya know...be more than pretty cows dancing around. 
 
 ***
-###Two: Syncing Events between blocks
+###Two: 
+####Syncing Events between blocks
 
 When we click on a button we expect something to happen, right? That's why buttons 
 exist! Likewise, buttons in BlocksJS emit an event to the page with a message. 
