@@ -6,7 +6,7 @@ for the page to use.
 
 
 
-##Zero: What is our index.json file? 
+###Zero: What is our index.json file? 
 With BlocksJS we should always be able to create a page by simply looking at the 
 list of blocks that are on the page and any settings they have. The BlocksJS engine 
 will parse it, look up the module definition of each blockClass and create each of 
@@ -60,10 +60,10 @@ on the page.
 } 
 ```
 
-##One Creating Blocks
+###One Creating Blocks
 ***
 
-###Create a Button 
+####Create a Button 
 To begin the interaction we need a button on the page. let's add that to our 
 index.json file under children for the page block. 
 ```json
@@ -119,7 +119,7 @@ add a grid Container where the images would be and give it some images!
 
 
 
-###Add a Container for Images
+####Add a Container for Images
 ```json
 	{
 		"name": "testPage ",
@@ -156,7 +156,7 @@ This is a beautiful website on it's own, but let's make it actually do something
 Ya know...be more than pretty cows dancing around. 
 
 ***
-##Two: Syncing Events between blocks
+###Two: Syncing Events between blocks
 
 When we click on a button we expect something to happen, right? That's why buttons 
 exist! Likewise, buttons in BlocksJS emit an event to the page with a message. 
@@ -166,7 +166,7 @@ in some way (there are multiple ways to extend a class as we shall see later).
 
 The key feature of the button blockClass is that it automatically sends a message when it is clicked or activated. Looking at the blockClass itself we see that when it is pressed it automatically calls the *'emit'* function, which sends a message to the global 'button' channel. 
 
-###//(In the Button block declaration, linked here)
+####//(In the Button block declaration, linked here)
 ```javascript
 	emit: function(event){ 
 		//allow our model to override our defaults by default. We could change this in 
@@ -231,7 +231,7 @@ This is a list of messages we want the block to listen for and respond to afterw
 This would correspond to a function being called and some chain of events beginning
 for whatever reason. 
 
-###The ins: 
+####The ins: 
 ```javascript
 	[fnName, topic, channel] //these are going to be used to create a subscription 
 									for a callback in the grid container to show itself. 
