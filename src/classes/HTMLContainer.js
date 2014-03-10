@@ -25,17 +25,13 @@ define(['Container', 'HTMLBlock'], function(Container, HTMLBlock){
 				this.$el.clear(); 
 				return this; 
 			}, 
-			addBlock: function(block){
+			addBlock: function(block){ 
 				var container = this; 
-				if(block.render)
+				if(block.render) 
 					this.$el.append(block.render().el); 
-				window.requestAnimationFrame(function(){
-					//console.log(container);
+				window.requestAnimationFrame(function(){ 
 					container.page.renderCSS(); 
 				}); 
-				/*setTimeout(function(){
-					container.page.renderCSS(); 
-				}, 0); */
 				return this; 
 			},
 			renderBlock: function(model){ 
@@ -66,7 +62,7 @@ define(['Container', 'HTMLBlock'], function(Container, HTMLBlock){
 		   			block.$el.append(view.render()); 
 			   		return view; 
 		   		} 	
-			}
+			} 
 		});	
 	return HTMLContainer; 
 }); 

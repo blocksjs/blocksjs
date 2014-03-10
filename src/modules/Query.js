@@ -7,7 +7,7 @@ define([], function(){
             (function recurse(collection){ 
                 _.each(collection, function(child){ 
                     numBlocks++; 
-                    if(child.subcollection) recurse(child.subcollection); 
+                    if(children = (child.subcollection || child.children)) recurse(children); 
                 }); 
             })(collection); 
             return numBlocks; 

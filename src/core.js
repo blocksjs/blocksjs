@@ -55,8 +55,10 @@ define(["jquery", "underscore", "backbone", "less", "postal","Block", "Container
 
             //set classes
             _.each(classes, function(className){
-                var index = _.indexOf(blocks._classList[className], blockId); 
-                blocks._classList[className].splice(index,1); 
+                if(className !== 'Block'){
+                    var index = _.indexOf(blocks._classList[className], blockId); 
+                    blocks._classList[className].splice(index,1); 
+                }                
             }); 
 
             return this; 

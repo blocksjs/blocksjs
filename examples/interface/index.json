@@ -1,0 +1,41 @@
+{
+  "name": "test5 ",
+  "classes": [
+    "Image", 
+    "ImageButtonGridContainer"
+  ],
+  "content": {
+    "blockClass": "Page",
+    "children": [
+      {
+        "blockClass":"Button", 
+        "settings":{
+          "text":"+", 
+          "message":"showBlocks", 
+          "css":{
+            "width":"50px", 
+            "height":"50px", 
+            "position":"absolute", 
+            "top": "5px", 
+            "right": "5px"
+          }
+        }
+      }, 
+      {
+        "blockClass":"ImageButtonGridContainer", 
+        "settings":{
+          "ins":[
+            ["show","showBlocks", "button"], 
+            ["hide", "selectBlock", "button"]
+          ],
+          "distribution":66,  
+          "message": ["selectBlock", "selectBlock", "selectBlock", "selectBlock", "selectBlock", "selectBlock", "selectBlock", "selectBlock", "selectBlock", "selectBlock", "selectBlock", "selectBlock"], 
+          "css":{
+            "opacity":0, 
+            "pointer-events":"none"
+          }
+        }
+      }
+    ]
+  }
+}

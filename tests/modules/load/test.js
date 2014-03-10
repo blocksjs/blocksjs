@@ -72,8 +72,8 @@ require(['core'], function(core){
     describe('#loadPage()', function(){ 
       var json = {}; 
       var json2 = {sync: true}; 
-      it('should be able to load a string reference and load it', function(done){
-        blocks.loadPage('../../tests/test.json', function(json){
+      it('should be able to load a string reference and load it', function(done){ 
+        blocks.loadPage('../../tests/test.json', function(json){ 
           expect(_.isObject(json)).to.be.true; 
           done(); 
         }); 
@@ -95,10 +95,7 @@ require(['core'], function(core){
               {
                 "view": {
                   "x": "635",
-                  "y": "231",
-                  "z": "0",
-                  "autohide": "false",
-                  "immutableCSS": "false",
+                  "y": "231", 
                   "css": {
                     "position": "fixed",
                     "width": "200px",

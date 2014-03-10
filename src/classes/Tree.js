@@ -3,12 +3,23 @@ define(['HTMLContainer'], function(HTMLContainer){
 		blockClass: 'Tree', 
 		superClass: 'HTMLContainer', 
 		super: HTMLContainer.prototype, 
-		defaultCSS: _.extend({}, HTMLContainer.prototype.defaultCSS, {
+		defaultCSS: _.extend({}, HTMLContainer.prototype.defaultCSS, { 
 			/*'-webkit-transform': 'scale(.5)', 
 			'-moz-transform': 'scale(.5)', 
-			transform: 'scale(.5)', */
-			position:'fixed'
+			transform: 'scale(.5)', */ 
+			position:'fixed' 
 		}), 
+		defaults:{ 
+			x: 0, 
+			y: 0, 
+			scaleX: 0, 
+			scaleY: 0 
+		}, 
+		initialize: function(attrs){
+			HTMLContainer.prototype.initialize.call(this, attrs); 
+			console.log('attributes for the tree', attrs); 
+			console.log('im a tree', this, 'tree.x', this.get('x'), 'tree.y', this.get('y')); 
+		}, 
 		skeleton: { 
 			view: {
 				x: 'settings.x', 

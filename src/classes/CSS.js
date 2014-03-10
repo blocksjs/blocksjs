@@ -9,7 +9,7 @@ define(['require','jquery', 'underscore', 'backbone'], function(require, $, _, B
 			this.defaultInlineProperties= []; 
 
 			//add Backbone Events and update the active property list on change 
-			this.on('change', this.update, this); 
+			this.on('change', this.set, this); 
 
 			//transform changes 
 			this.parent.on('change', function(){
@@ -38,7 +38,7 @@ define(['require','jquery', 'underscore', 'backbone'], function(require, $, _, B
 				skewX  = parent.get('skewX'), 
 				skewY  = parent.get('skewY'); 
 
-				//transform properties
+				//transform properties 
 				if(x !== 0 || y !== 0 || z !== 0) ret += 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px ) '; 
 
 				//rotate properties 
@@ -53,17 +53,17 @@ define(['require','jquery', 'underscore', 'backbone'], function(require, $, _, B
 				if(skewX || skewY) ret += 'skew(' + (skewX || 0) + 'deg, ' + (skewY || 0) + 'deg) '; 
 
 				//return object with domstring for each type of browser
+				//if(this.parent.isBlockClass())
 				return {
 					'transform': ret, 
 					'-webkit-transform': ret, 
 					'-moz-transform': ret
 				}
-
 			},
 			get: function(name){
 				return this.active[name]; 
 			},
-			update: function(css){
+			set: function(css){
 				_.extend(this.active, css);
 				return this; 
 			},
@@ -151,8 +151,7 @@ define(['require','jquery', 'underscore', 'backbone'], function(require, $, _, B
 				//let children define their css as well 
 				if( css.parent.subcollection && css.parent.subcollection.length > 0){ 
 					css.parent.subcollection.each(function(view){ 
-						if(view.css)
-							CSSstring += view.css.render(); 
+						if(view.css && view.css.render) CSSstring += view.css.render(); 
 					}); 
 				}; 
 

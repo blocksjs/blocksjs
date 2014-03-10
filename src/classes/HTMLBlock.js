@@ -44,22 +44,14 @@ define(['ViewBlock', 'CSS'], function(ViewBlock, CSS){
 			var view, deferred; 
 			view = this; 
 
-			if(view.$el.css('opacity') != 0){
-
-				//on transition end set display to none
-				view.$el.on('transitionEnd webkitTransitionEnd mozTransitionEnd', function handle(ev){
-					if(ev.originalEvent.propertyName === 'opacity' && ev.originalEvent.target === view.el){
-						view.$el.css({'display':'none'}); 
-						view.css.set({'display':'none'}); 
-						view.$el.off('transitionEnd webkitTransitionEnd mozTransitionEnd', handle); 
-					}				
-				}); 
-				view.$el.css({'opacity':'0'}); 
-				view.css.set({'opacity': 0}); 
-			}else{
-				view.$el.css({'display':'none'}); 
-			}				
-
+			if(view.$el.css('opacity') !== 0){
+				var hideCSS = {
+					'opacity':0, 
+					'pointer-events':'none'
+				}
+				view.$el.css(hideCSS); 
+				view.css.set(hideCSS); 
+			}
 			//if the element has a youtube player stop it
 			if(player = this.player){
 				player.stopVideo(); 
@@ -67,13 +59,17 @@ define(['ViewBlock', 'CSS'], function(ViewBlock, CSS){
 			return this; 
 		}, 
 		show: function(){  
-			var view, display; 
-			view = this, 
-			display = this.defaultCSS.display !== 'none'? this.defaultCSS.display : 'inline-block'; 
-			this.$el.css({'display': display})
-					.css({'opacity':'1'}); 
-			this.css.set({'display': display, 
-						  'opacity':'1'}); 
+			var view = this, 
+				display = this.defaultCSS.display !== 'none'? this.defaultCSS.display : 'inline-block'; 
+			
+			var showCSS =  {
+				display: display, 
+				opacity:1, 
+				'pointer-events':'auto'
+			}
+
+			view.$el.css(showCSS); 
+			view.css.set(showCSS); 
 			return this; 
 		}, 
 		inViewPort: function () {

@@ -32,7 +32,7 @@ define(['io','create', 'query'], function(io, create, query){
                         child.content = page; 
                         if(!settings.sync) page.view.render(); 
 
-                        //cache page and create collection if it doesn't exist
+                        //cache page and create collection if it doesn't exist 
                         (controller.collection)? 
                             controller.pages.push(child): 
                             controller.pages = [child];   
@@ -42,8 +42,8 @@ define(['io','create', 'query'], function(io, create, query){
                 }); 
             };             
         },  
-        _loadPageSync: function(json){
-            var controller = this,
+        _loadPageSync: function(json){ 
+            var controller = this, 
                 numChildren = query.getNumBlocks.call(controller, json.content); 
 
             controller.renderState = _.after(numChildren, function(){ 

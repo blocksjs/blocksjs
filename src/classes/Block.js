@@ -1,4 +1,4 @@
-define(['postal','backbone'], function(Postal, Backbone){
+define(['postal','backbone'], function(Postal, Backbone){ 
 	var Block = function(options){ 
 		var block = this; 
 
@@ -156,10 +156,10 @@ otherwise, get/set will be a viewblock thing for now
 		},
 		//function that sets the page to the current page value (using findPage)
 		//and returns the page itself
-		_getPage: function(){
-			var block = this;
-			if(window.blocks){ //if blocks is defined, traverse the tree
-				block.page = block._findPage();
+		_getPage: function(){ 
+			var block = this; 
+			if(window.blocks){ //if blocks is defined, traverse the tree 
+				block.page = block._findPage(); 
 				if(block.page.blockClass == 'Block'){ //if top most thing is block
 					block.page = void 0;
 					return void 0; //set page to undefined and return
@@ -176,7 +176,8 @@ otherwise, get/set will be a viewblock thing for now
 		_findPage: function(){
 			var block = this;
 			if(window.blocks){
-				if(block.parent && block.parent != window.blocks)
+				//console.log(block); 
+				if(block.parent && block.parent !== window.blocks)
 					return block.parent._findPage();
 				else
 					return block;
@@ -259,7 +260,7 @@ otherwise, get/set will be a viewblock thing for now
 				subscription.channel = channel;
 
 			if(_.isFunction(block[attribute])){
-				subscription.callback = block[attribute];
+				subscription.callback = block[attribute].bind(block);
 			} else {
 				subscription.callback = function(data){
 					block[attribute] = data;

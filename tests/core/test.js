@@ -60,7 +60,7 @@ require.config({
       name: 'load', 
       location: '../modules', 
       main: 'PageLoader' 
-    }
+    } 
   ] 
 }); 
 require(['core'], function(core){ 
@@ -77,15 +77,15 @@ require(['core'], function(core){
         expect(blocks).to.have.a.property('_blockIds');  
       }); 
 
-      it('should have update the hash every time a block is created', function(done){
-        blocks.createBlock('Block', function(block){
+      it('should have update the hash every time a block is created', function(done){ 
+        blocks.createBlock('Block', function(block){ 
           expect(blocks._blockIds[block.view._blockID]).to.equal(block.view); 
           done(); 
         }); 
       }); 
 
-      it('should update every time a block is deleted', function(done){
-        blocks.createBlock('Block', function(block){
+      it('should update every time a block is deleted', function(done){ 
+        blocks.createBlock('Block', function(block){ 
           var blockId = block.view._blockID; 
           block.view.remove(); 
           expect(blocks._blockIds[blockId]).to.not.exist; 
@@ -107,6 +107,7 @@ require(['core'], function(core){
             blockID: 'mySpecialClass'
           }
         }, function(block){
+          //the hash should mape 'mySpecialClass' to _blockID
           expect(blocks._userBlockIds[block.view.get('blockID')]).to.equal(block.view._blockID); 
           done(); 
         }); 
@@ -161,8 +162,16 @@ require(['core'], function(core){
             blockID: 'mySpecialClass' 
           } 
         }, function(block){ 
-          var classes = block.view.getClassAncestry().concat(block.view.blockClass);
-          expect(blocks._userBlockIds[block.view.get('blockID')]).to.equal(block.view._blockID); 
+          var classes = block.view.getClassAncestry().concat(block.view.blockClass), 
+              maybe;
+          _.each(classes, function(className){
+            if(className !== 'Block'){
+              maybe = _.find(blocks._classList[className], function(id){ 
+                return id === block.view._blockID; 
+              }); 
+            }
+          })
+          expect(maybe).to.not.be.true; 
           done(); 
         }); 
       });
