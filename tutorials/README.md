@@ -1,4 +1,5 @@
-#BlocksJS Tutorial: Creating a popout grid of blocks with JSON 
+#BlocksJS Tutorial: 
+##Creating a popout grid of blocks with JSON 
 
 **Goal:** We want to create a sipmle interaction where we click a btton and a grid 
 of blocks appears. Once a user has selected one it will be saved as a referece 
