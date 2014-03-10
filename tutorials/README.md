@@ -60,7 +60,7 @@ on the page.
 ##First: Create a Button 
 To begin the interaction we need a button on the page. let's add that to our 
 index.json file under children for the page block. 
-```javascript
+```json
 	{
 		"name": "testPage ",
 		"classes": [
@@ -81,7 +81,7 @@ index.json file under children for the page block.
 ```
 So we've added the Block to the page, but it needs a little bit of styling to make 
 sure it's always in the same place. Let's give it a little bit of css. 
-```javascript
+```json
 
 	{
 		"name": "testPage ",
@@ -112,7 +112,7 @@ This should make sure we've placed it in the upper right hand corner. Now let's
 add a grid Container where the images would be and give it some images! 
 
 ##Second: Add a Container for Images
-```javascript
+```json
 	{
 		"name": "testPage ",
 		"classes": [
@@ -178,7 +178,7 @@ the 'emit' function, which sends a message to the global 'button' channel.
 Ok so we have a message published when the button is pressed, but the container 
 doesn't yet listen for those changes. Blocks can take a special 'ins' array when 
 being created. 
-```javascript
+```json
 	{
 		"name": "testPage ",
 		"classes": [
@@ -225,7 +225,7 @@ The ins:
 In our case, we simply want the grid to appear, hence it calls show. But we also need it 
 to be invisible when the page loads so that we can get the effect. So lets add some css 
 to the container
-```javascript
+```json
 
 	{
 		"name": "testPage ",
