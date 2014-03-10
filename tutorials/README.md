@@ -1,4 +1,4 @@
-/*Tutorial: Creating a Popout Grid of blocks to choose from 
+Tutorial: Creating a Popout Grid of blocks to choose from 
 
 Goal: We want to create a sipmle interaction where we click a btton and a grid 
 of blocks appears. Once a user has selected one it will be saved as a referece 
@@ -11,7 +11,7 @@ With BlocksJS we should always be able to create a page by simply looking at the
 list of blocks that are on the page and any settings they have. The BlocksJS engine 
 will parse it, look up the module definition of each blockClass and create each of 
 those blocks as listed. So in a nutshell, the index.json is simply a list of things 
-on the page. */
+on the page. 
 
 	{ 
 		//The "name" attribute is the name of the page, useful for metadata purposes. 
