@@ -1,12 +1,11 @@
 #BlocksJS Tutorial: 
 ##Creating a popout grid of blocks with JSON 
-
 **Goal:** We want to create a sipmle interaction where we click a btton and a grid 
 of blocks appears. Once a user has selected one it will be saved as a referece 
 for the page to use. 
 
 
-*** 
+
 ##Zero: What is our index.json file? 
 With BlocksJS we should always be able to create a page by simply looking at the 
 list of blocks that are on the page and any settings they have. The BlocksJS engine 
