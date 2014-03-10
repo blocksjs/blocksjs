@@ -159,6 +159,7 @@ Looking at the blockClass itself we see that when it is pressed it automatically
 the 'emit' function, which sends a message to the global 'button' channel. 
 
 ###//(In the Button block declaration, linked here)
+```javascript
 	emit: function(event){ 
 		//allow our model to override our defaults by default. We could change this in 
 		//a new class that extends button to change this behavior. 
@@ -173,11 +174,11 @@ the 'emit' function, which sends a message to the global 'button' channel.
 		return this; 
 	}
 
-
+```
 Ok so we have a message published when the button is pressed, but the container 
 doesn't yet listen for those changes. Blocks can take a special 'ins' array when 
 being created. 
-
+```javascript
 	{
 		"name": "testPage ",
 		"classes": [
@@ -212,7 +213,7 @@ being created.
 	  		]  		
 	  	}
 	} 
-
+```
 This is a list of messages we want the block to listen for and respond to afterwards. 
 This would correspond to a function being called and some chain of events beginning
 for whatever reason. 
@@ -224,7 +225,7 @@ The ins:
 In our case, we simply want the grid to appear, hence it calls show. But we also need it 
 to be invisible when the page loads so that we can get the effect. So lets add some css 
 to the container
-
+```javascript
 
 	{
 		"name": "testPage ",
@@ -265,7 +266,7 @@ to the container
 	  		]		
 	  	}
 	} 
-
+```
 Let's make sure the setup is working! After loading the page you should NOT
 see a container and when you click the 'Add' button it should show up. If you've done 
 that then you're doing well! 
@@ -275,7 +276,7 @@ are ALL image buttons, a premade class that is a button but with an image instea
 of text. That's a pretty common web block so it's already made for you. It's still a button
 block, so it emits whatever message you pass into it when clicked, but you can 
 also give an 'img' attribute to make it unique. Let's give our container some ImageButtons! 
-
+```json 
 
 	{
 		"name": "testPage ",
@@ -347,11 +348,11 @@ also give an 'img' attribute to make it unique. Let's give our container some Im
 	  		]
 	  	}
 	} 
-
+```
 We have given the container four children Image Buttons which should load if we 
 refresh the page. Great job! The only thing left to do is make sure that the container
 is listening to the selectBlock event so that it can hide again. 
-
+```json
 
 	{
 		"name": "testPage ",
@@ -423,7 +424,7 @@ is listening to the selectBlock event so that it can hide again.
 			]
 		}
 	} 
-
+```
 There you have it! a website with pretty basic functionality with relatively little work. 
 And you didn't even have to write a line of code (well sort of...) :D We'll be looking 
 through some of the smaller details in other tutorials like making a varying number of 
