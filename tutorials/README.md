@@ -1,17 +1,19 @@
 #Tutorial 01: Learning BlocksJS 
-##Creating a popout grid of blocks with JSON
+##Creating a popout grid of blocks with JSON 
 
-Goal: We want to create a sipmle interaction where we click a btton and a grid 
+**Goal:** We want to create a sipmle interaction where we click a btton and a grid 
 of blocks appears. Once a user has selected one it will be saved as a referece 
 for the page to use. 
 
-##Zero: What is our index.json file?
+
+*** 
+##Zero: What is our index.json file? 
 With BlocksJS we should always be able to create a page by simply looking at the 
 list of blocks that are on the page and any settings they have. The BlocksJS engine 
 will parse it, look up the module definition of each blockClass and create each of 
 those blocks as listed. So in a nutshell, the index.json is simply a list of things 
 on the page. 
-```javascript
+```javascript 
 { 
 	//The "name" attribute is the name of the page, useful for metadata purposes. 
   	"name": "testPage ", 
@@ -58,7 +60,11 @@ on the page.
   	}
 } 
 ```
-##First: Create a Button 
+
+##One Creating Blocks
+***
+
+###Create a Button 
 To begin the interaction we need a button on the page. let's add that to our 
 index.json file under children for the page block. 
 ```json
@@ -112,7 +118,9 @@ sure it's always in the same place. Let's give it a little bit of css.
 This should make sure we've placed it in the upper right hand corner. Now let's 
 add a grid Container where the images would be and give it some images! 
 
-##Second: Add a Container for Images
+
+
+###Add a Container for Images
 ```json
 	{
 		"name": "testPage ",
@@ -148,16 +156,16 @@ When we view the page we should see both the button and the container. Lookin' D
 This is a beautiful website on it's own, but let's make it actually do something. 
 Ya know...be more than pretty cows dancing around. 
 
+***
+##Two: Syncing Events between blocks
+
 When we click on a button we expect something to happen, right? That's why buttons 
 exist! Likewise, buttons in BlocksJS emit an event to the page with a message. 
 They also alert their parent that they've been pressed. All button blocks do this 
 by default and thus if we want to make more types of button-type objects we should 
 in some way (there are multiple ways to extend a class as we shall see later). 
 
-The button blockClass automatically sends a message when it is clicked. It's one 
-of te key reasons for being a different type of block, because that's what buttons do! 
-Looking at the blockClass itself we see that when it is pressed it automatically calls 
-the 'emit' function, which sends a message to the global 'button' channel. 
+The key feature of the button blockClass is that it automatically sends a message when it is clicked or activated. Looking at the blockClass itself we see that when it is pressed it automatically calls the *'emit'* function, which sends a message to the global 'button' channel. 
 
 ###//(In the Button block declaration, linked here)
 ```javascript
@@ -176,8 +184,11 @@ the 'emit' function, which sends a message to the global 'button' channel.
 	}
 
 ```
+
+
+
 Ok so we have a message published when the button is pressed, but the container 
-doesn't yet listen for those changes. Blocks can take a special 'ins' array when 
+doesn't yet listen for those changes. Blocks can take a special *'ins'* array when 
 being created. 
 ```json
 	{
@@ -215,22 +226,24 @@ being created.
 	  	}
 	} 
 ```
+
+
 This is a list of messages we want the block to listen for and respond to afterwards. 
 This would correspond to a function being called and some chain of events beginning
 for whatever reason. 
 
-The ins: 
+###The ins: 
+```javascript
 	[fnName, topic, channel] //these are going to be used to create a subscription 
 									for a callback in the grid container to show itself. 
-
+```
 In our case, we simply want the grid to appear, hence it calls show. But we also need it 
 to be invisible when the page loads so that we can get the effect. So lets add some css 
-to the container
-```json
-
-	{
-		"name": "testPage ",
-		"classes": [
+to the container 
+```json 
+	{ 
+		"name": "testPage ", 
+		"classes": [ 
 	    	"Image", 
 	    	"ColumnContainer" 
 	  	], 
@@ -268,6 +281,7 @@ to the container
 	  	}
 	} 
 ```
+
 Let's make sure the setup is working! After loading the page you should NOT
 see a container and when you click the 'Add' button it should show up. If you've done 
 that then you're doing well! 
@@ -350,6 +364,8 @@ also give an 'img' attribute to make it unique. Let's give our container some Im
 	  	}
 	} 
 ```
+
+
 We have given the container four children Image Buttons which should load if we 
 refresh the page. Great job! The only thing left to do is make sure that the container
 is listening to the selectBlock event so that it can hide again. 
@@ -426,6 +442,8 @@ is listening to the selectBlock event so that it can hide again.
 		}
 	} 
 ```
+
+
 There you have it! a website with pretty basic functionality with relatively little work. 
 And you didn't even have to write a line of code (well sort of...) :D We'll be looking 
 through some of the smaller details in other tutorials like making a varying number of 
